@@ -4,23 +4,18 @@ import android.support.v4.content.ContextCompat
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import android.Manifest
-import android.content.Context
+import android.content.Intent
 import android.content.pm.PackageManager
 import android.content.res.Configuration
 import android.content.res.Resources
 import android.support.v4.app.ActivityCompat
-import android.view.View
 import android.widget.LinearLayout
 import android.widget.TableRow
-import android.widget.TextView
 import android.widget.Toast
 
-import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.SupportMapFragment
-import com.google.android.gms.maps.model.LatLng
-import com.google.android.gms.maps.model.MarkerOptions
 import kotlinx.android.synthetic.main.activity_maps.*
 
 class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
@@ -47,11 +42,11 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
         checkDimensions(config)
 
         // Set up button onclick handlers
-        previousButton.setOnClickListener {
+        mapsPreviousButton.setOnClickListener {
             previousStep()
         }
 
-        nextButton.setOnClickListener {
+        mapsNextButton.setOnClickListener {
             nextStep()
         }
 
@@ -109,7 +104,8 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
     }
 
     private fun previousStep() {
-        Toast.makeText(this, "Previous step", Toast.LENGTH_LONG).show()
+        val i = Intent(this, SuppliesActivity::class.java)
+        startActivity(i)
     }
 
     private fun nextStep() {
