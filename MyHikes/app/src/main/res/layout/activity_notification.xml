@@ -5,7 +5,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.example.tyasw.myhikes.MainActivity">
+    tools:context="com.example.tyasw.myhikes.NotificationActivity">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -17,6 +17,12 @@
             android:layout_height="0dp"
             android:layout_weight="15">
 
+            <TableLayout
+                android:id="@+id/dbTable"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+            </TableLayout>
         </TableRow>
 
         <TableRow
@@ -30,18 +36,18 @@
                 android:layout_height="match_parent">
 
                 <Button
-                    android:id="@+id/mainAddButton"
+                    android:id="@+id/notificationPreviousButton"
                     style="@android:style/Widget.DeviceDefault.Button.Borderless"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_alignParentLeft="true"
                     android:layout_marginRight="0dp"
-                    android:onClick="addNew"
+                    android:onClick="previousStep"
                     android:padding="8dp"
-                    android:text="Add New" />
+                    android:text="Previous" />
 
                 <Button
-                    android:id="@+id/mainNextButton"
+                    android:id="@+id/notificationFinishButton"
                     style="@android:style/Widget.DeviceDefault.Button.Borderless"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -49,7 +55,7 @@
                     android:layout_marginLeft="0dp"
                     android:onClick="nextStep"
                     android:padding="8dp"
-                    android:text="Next" />
+                    android:text="Finish" />
 
             </RelativeLayout>
 
@@ -57,3 +63,4 @@
     </LinearLayout>
 
 </android.support.constraint.ConstraintLayout>
+

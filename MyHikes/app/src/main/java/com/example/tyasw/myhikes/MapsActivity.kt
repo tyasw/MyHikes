@@ -1,16 +1,12 @@
 package com.example.tyasw.myhikes
 
 import android.support.v4.content.ContextCompat
-import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import android.Manifest
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.content.res.Configuration
-import android.content.res.Resources
 import android.support.v4.app.ActivityCompat
-import android.widget.LinearLayout
-import android.widget.TableRow
 import android.widget.Toast
 
 import com.google.android.gms.maps.GoogleMap
@@ -18,11 +14,7 @@ import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.SupportMapFragment
 import kotlinx.android.synthetic.main.activity_maps.*
 
-class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
-
-    private var pixelDensity: Float = 0.toFloat()
-    private var verticalDimensionsSet: Boolean = false
-    private var horizontalDimensionsSet: Boolean = false
+class MapsActivity : StepActivity(), OnMapReadyCallback {
 
     private val LOCATION_REQUEST_CODE = 101
     private lateinit var mMap: GoogleMap
@@ -34,12 +26,6 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
         val mapFragment = supportFragmentManager
                 .findFragmentById(R.id.map) as SupportMapFragment
         mapFragment.getMapAsync(this)
-
-        val res = resources
-        val metrics = res.displayMetrics
-        pixelDensity = metrics.density
-        val config = resources.configuration
-        checkDimensions(config)
 
         // Set up button onclick handlers
         mapsPreviousButton.setOnClickListener {
@@ -109,38 +95,12 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
     }
 
     private fun nextStep() {
-        Toast.makeText(this, "Next step", Toast.LENGTH_LONG).show()
-    }
-
-    fun checkDimensions(config: Configuration) {
-        if (config.orientation == Configuration.ORIENTATION_LANDSCAPE) {
-            horizontalDimensionsSet = true
-        } else if (config.orientation == Configuration.ORIENTATION_PORTRAIT) {
-            verticalDimensionsSet = true
-        }
-    }
-
-    // Make sure that the button row at the bottom of the activity is large enough
-    fun setLayoutMargins(buttonRow: TableRow) {
-        val buttonRowWeight = when (verticalDimensionsSet) {
-            true -> 1f
-            false -> 2f
-        }
-
-        buttonRow.layoutParams = LinearLayout.LayoutParams(
-                LinearLayout.LayoutParams.MATCH_PARENT,
-                0,
-                buttonRowWeight
-        )
+        val i = Intent(this, ContactsActivity::class.java)
+        startActivity(i)
     }
 
     override fun onConfigurationChanged(newConfig: Configuration) {
         super.onConfigurationChanged(newConfig)
-        if (!verticalDimensionsSet || !horizontalDimensionsSet)
-            checkDimensions(newConfig)
-    }
-
-    private fun pxToDP(dp: Int): Int {
-        return dp * Resources.getSystem().displayMetrics.density.toInt()
+        Toast.makeText(this, "Configuration changed", Toast.LENGTH_LONG).show()
     }
 }

@@ -4,19 +4,19 @@ import android.content.Intent
 import android.content.res.Configuration
 import android.os.Bundle
 import android.widget.Toast
-import kotlinx.android.synthetic.main.activity_basic_info.*
+import kotlinx.android.synthetic.main.activity_contacts.*
 
-class BasicInfoActivity : StepActivity() {
+class ContactsActivity : StepActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_basic_info)
+        setContentView(R.layout.activity_contacts)
 
-        basicPreviousButton.setOnClickListener {
+        contactsPreviousButton.setOnClickListener {
             previousStep()
         }
 
-        basicNextButton.setOnClickListener {
+        contactsNextButton.setOnClickListener {
             nextStep()
         }
 
@@ -29,12 +29,12 @@ class BasicInfoActivity : StepActivity() {
     }
 
     private fun previousStep() {
-        val i = Intent(this, MainActivity::class.java)
+        val i = Intent(this, MapsActivity::class.java)
         startActivity(i)
     }
 
     private fun nextStep() {
-        val i = Intent(this, SuppliesActivity::class.java)
+        val i = Intent(this, NotificationActivity::class.java)
         startActivity(i)
     }
 }

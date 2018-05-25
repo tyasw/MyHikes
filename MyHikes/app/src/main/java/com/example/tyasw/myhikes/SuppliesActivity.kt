@@ -2,30 +2,22 @@ package com.example.tyasw.myhikes
 
 import android.content.Intent
 import android.content.res.Configuration
-import android.content.res.Resources
-import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
-import android.widget.LinearLayout
 import android.widget.TableRow
+import android.widget.TextView
+import android.widget.Toast
 import kotlinx.android.synthetic.main.activity_supplies.*
 
-class SuppliesActivity : AppCompatActivity() {
-
-    private var pixelDensity: Float = 0.toFloat()
-    private var verticalDimensionsSet: Boolean = false
-    private var horizontalDimensionsSet: Boolean = false
-
-    private val LOCATION_REQUEST_CODE = 101
+class SuppliesActivity : StepActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_basic_info)
+        setContentView(R.layout.activity_supplies)
 
-        val res = resources
-        val metrics = res.displayMetrics
-        pixelDensity = metrics.density
-        val config = resources.configuration
-        checkDimensions(config)
+        // Check DB to see if this is a preexisting hike, populate list if it is
+        // else have blank list of supplies
+
+        setUpSuppliesList()
 
         suppliesPreviousButton.setOnClickListener {
             previousStep()
@@ -33,6 +25,42 @@ class SuppliesActivity : AppCompatActivity() {
 
         suppliesNextButton.setOnClickListener {
             nextStep()
+        }
+
+        setLayoutMargins(buttonRow)
+    }
+
+    // Populate the list of supplies if items already exist, or create a new one
+    private fun setUpSuppliesList() {
+        val suppliesList = ArrayList<Int>()
+
+        val columnTitles = TableRow(this)
+
+        if (!suppliesList.isEmpty()) {  // Create column titles
+            dbTable.addView(columnTitles)
+        } else {    // Display "no supplies" message
+            val noResults = TextView(this)
+            noResults.text = "No entries"
+            noResults.layoutParams = setLayout(10, 0, 10, 0)
+            noResults.textSize = 18f
+            columnTitles.addView(noResults)
+
+            dbTable.addView(columnTitles)
+        }
+
+
+        // Populate supplies list
+        for (item: Int in suppliesList) {
+            val row = TableRow(this)
+            val suppliesId = TextView(this)
+            // And so on...
+
+            // Set margins
+
+            // Add views to row
+            row.addView(suppliesId)
+
+            dbTable.addView(row)
         }
     }
 
@@ -46,35 +74,8 @@ class SuppliesActivity : AppCompatActivity() {
         startActivity(i)
     }
 
-    fun checkDimensions(config: Configuration) {
-        if (config.orientation == Configuration.ORIENTATION_LANDSCAPE) {
-            horizontalDimensionsSet = true
-        } else if (config.orientation == Configuration.ORIENTATION_PORTRAIT) {
-            verticalDimensionsSet = true
-        }
-    }
-
-    // Make sure that the button row at the bottom of the activity is large enough
-    fun setLayoutMargins(buttonRow: TableRow) {
-        val buttonRowWeight = when (verticalDimensionsSet) {
-            true -> 1f
-            false -> 2f
-        }
-
-        buttonRow.layoutParams = LinearLayout.LayoutParams(
-                LinearLayout.LayoutParams.MATCH_PARENT,
-                0,
-                buttonRowWeight
-        )
-    }
-
     override fun onConfigurationChanged(newConfig: Configuration) {
         super.onConfigurationChanged(newConfig)
-        if (!verticalDimensionsSet || !horizontalDimensionsSet)
-            checkDimensions(newConfig)
-    }
-
-    private fun pxToDP(dp: Int): Int {
-        return dp * Resources.getSystem().displayMetrics.density.toInt()
+        Toast.makeText(this, "Configuration changed", Toast.LENGTH_LONG).show()
     }
 }

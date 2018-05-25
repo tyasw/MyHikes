@@ -4,20 +4,20 @@ import android.content.Intent
 import android.content.res.Configuration
 import android.os.Bundle
 import android.widget.Toast
-import kotlinx.android.synthetic.main.activity_basic_info.*
+import kotlinx.android.synthetic.main.activity_notification.*
 
-class BasicInfoActivity : StepActivity() {
+class NotificationActivity : StepActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_basic_info)
+        setContentView(R.layout.activity_notification)
 
-        basicPreviousButton.setOnClickListener {
+        notificationPreviousButton.setOnClickListener {
             previousStep()
         }
 
-        basicNextButton.setOnClickListener {
-            nextStep()
+        notificationFinishButton.setOnClickListener {
+            finishStep()
         }
 
         setLayoutMargins(buttonRow)
@@ -29,12 +29,12 @@ class BasicInfoActivity : StepActivity() {
     }
 
     private fun previousStep() {
-        val i = Intent(this, MainActivity::class.java)
+        val i = Intent(this, ContactsActivity::class.java)
         startActivity(i)
     }
 
-    private fun nextStep() {
-        val i = Intent(this, SuppliesActivity::class.java)
+    private fun finishStep() {
+        val i = Intent(this, MainActivity::class.java)
         startActivity(i)
     }
 }
