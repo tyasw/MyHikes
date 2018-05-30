@@ -25,6 +25,8 @@ class MainActivity : StepActivity() {
             nextStep()
         }
 
+        //val dbHandler = MyDBHandler(this, null, null, 1)
+        //dbHandler.deleteAllHikes(SAMPLE_USER_ID)
         populateHikesList()
 
         setLayoutMargins(buttonRow)
@@ -35,7 +37,7 @@ class MainActivity : StepActivity() {
         Toast.makeText(this, "Configuration changed", Toast.LENGTH_LONG).show()
     }
 
-    fun populateHikesList() {
+    private fun populateHikesList() {
         hikesList.clear()
         hikesTable.removeAllViews()
 
@@ -68,10 +70,10 @@ class MainActivity : StepActivity() {
 
     private fun addNew() {
         val newHike = Hike(SAMPLE_USER_ID)
-        val dbHandler = MyDBHandler(this, null, null, 1)
-        dbHandler.addHike(newHike)
 
         val i = Intent(this, BasicInfoActivity::class.java)
+        i.putExtra("isNewHike", true)
+        i.putExtra("newHike", newHike)
         startActivity(i)
     }
 

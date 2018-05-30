@@ -36,7 +36,7 @@ class MyDBHandler(context: Context, name: String?,
     // ------------------------ HIKES table methods -------------------------//
     fun addHike(hike: Hike) {
         val values = ContentValues()
-        values.put(HIKES_COLUMN_ID, hike.id)
+        //values.put(HIKES_COLUMN_ID, hike.id)
         values.put(HIKES_USER_ID, hike.userId)
         values.put(HIKES_NAME, hike.name)
         values.put(HIKES_LENGTH, hike.length)
@@ -66,6 +66,44 @@ class MyDBHandler(context: Context, name: String?,
 
         db.close()
         return result
+    }
+
+    fun deleteAllHikes(userId: Int) {
+        val query = "SELECT * FROM $TABLE_HIKES WHERE $HIKES_USER_ID = $userId"
+
+        val db = this.writableDatabase
+
+        val cursor = db.rawQuery(query, null)
+
+        while (cursor.moveToNext()) {
+            val id = Integer.parseInt(cursor.getString(0))
+            db.delete(TABLE_HIKES, HIKES_COLUMN_ID + " = ?", arrayOf(id.toString()))
+        }
+        cursor.close()
+        db.close()
+    }
+
+    fun findHike(userId: Int, hikeName: String): Hike? {
+        val query = "SELECT * FROM $TABLE_HIKES WHERE $HIKES_USER_ID = $userId " +
+                "AND $HIKES_NAME = $hikeName"
+
+        val db = this.writableDatabase
+        val cursor = db.rawQuery(query, null)
+
+        var hike : Hike? = null
+
+        if (cursor.moveToFirst()) {
+            val hikeId = Integer.parseInt(cursor.getString(0))
+            val user = Integer.parseInt(cursor.getString(1))
+            val name = cursor.getString(2)
+            val length = cursor.getString(3).toDouble()
+            val difficulty = cursor.getString(4)
+
+            hike = Hike(hikeId, user, name, length, difficulty)
+            cursor.close()
+        }
+        db.close()
+        return hike
     }
 
     fun findHikeById(id: Int): Hike? {
