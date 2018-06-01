@@ -31,7 +31,8 @@
 
         <activity
             android:name=".MainActivity"
-            android:label="Choose a Hike">
+            android:label="Choose a Hike"
+            android:theme="@style/AppTheme.NoActionBar">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

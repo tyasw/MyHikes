@@ -7,8 +7,10 @@ import android.widget.Toast
 import kotlinx.android.synthetic.main.activity_basic_info.*
 
 class BasicInfoActivity : StepActivity() {
-    var receivedHike: Hike? = null
-    var isNewHike: Boolean = true
+    private var receivedHike: Hike? = null
+    private var supplies: ArrayList<Supply>? = null
+    private var contacts: ArrayList<Contact>? = null
+    private var isNewHike: Boolean = true
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -18,12 +20,12 @@ class BasicInfoActivity : StepActivity() {
 
         isNewHike = extras.getBoolean("isNewHike")
 
-        if (isNewHike) {
-            receivedHike = intent.getParcelableExtra<Hike>("newHike") ?: null
+        receivedHike = intent.getParcelableExtra<Hike>("newHike") ?: null
+        supplies = intent.getParcelableArrayListExtra<Supply>("supplies") ?: null
+        contacts = intent.getParcelableArrayListExtra<Contact>("contacts") ?: null
 
-            receivedHike?.let { receivedHike -> populateInfo(receivedHike) }
-        } else {
-            // Modifying a preexisting plan, receive the rest of the data
+        if (isNewHike) {
+            receivedHike.let { receivedHike -> populateInfo(receivedHike) }
         }
 
         basicPreviousButton.setOnClickListener {
@@ -34,7 +36,7 @@ class BasicInfoActivity : StepActivity() {
             nextStep()
         }
 
-        setLayoutMargins(buttonRow)
+        setButtonRowParameters(buttonRow)
     }
 
     override fun onConfigurationChanged(newConfig: Configuration) {
@@ -42,16 +44,34 @@ class BasicInfoActivity : StepActivity() {
         Toast.makeText(this, "Configuration changed", Toast.LENGTH_LONG).show()
     }
 
-    fun populateInfo(hike: Hike) {
-        hikeName.setText(hike.name.toString())
-        length.setText(hike.length.toString())
-        difficulty.setText(hike.difficulty.toString())
+    fun populateInfo(hike: Hike?) {
+        if (hike != null) {
+            hikeName.setText(hike.name.toString())
+            length.setText(hike.length.toString())
+            difficulty.setText(hike.difficulty.toString())
+        }
     }
 
     private fun previousStep() {
+        // Save all information user entered
+        receivedHike?.let {
+            it.name = hikeName.text.toString()
+            it.length = length.text.toString().toDouble()
+            it.difficulty = difficulty.text.toString()
+        }
+
         val i = Intent(this, MainActivity::class.java)
 
-        // Should we discard all changes made on this activity?
+        if (isNewHike) {
+            i.putExtra("isNewHike", true)
+        } else {
+            i.putExtra("isNewHike", false)
+        }
+
+        i.putExtra("newHike", receivedHike)
+        i.putExtra("supplies", supplies)
+        i.putExtra("contacts", contacts)
+
         startActivity(i)
     }
 
@@ -60,19 +80,20 @@ class BasicInfoActivity : StepActivity() {
         receivedHike?.let {
             it.name = hikeName.text.toString()
             it.length = length.text.toString().toDouble()
-            it.difficulty = difficulty.toString()
+            it.difficulty = difficulty.text.toString()
         }
 
         val i = Intent(this, SuppliesActivity::class.java)
 
         if (isNewHike) {
             i.putExtra("isNewHike", true)
-            i.putExtra("newHike", receivedHike)
         } else {
             i.putExtra("isNewHike", false)
-
-            // Place the rest of the data
         }
+
+        i.putExtra("newHike", receivedHike)
+        i.putExtra("supplies", supplies)
+        i.putExtra("contacts", contacts)
 
         startActivity(i)
     }

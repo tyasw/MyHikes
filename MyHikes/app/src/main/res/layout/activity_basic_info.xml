@@ -23,13 +23,14 @@
 
                 <TableRow
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent" >
+                    android:layout_height="match_parent"
+                    android:layout_margin="10dp">
 
                     <TextView
                         android:id="@+id/nameLabel"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Hike Name"
+                        android:text="@string/hike_name"
                         android:textSize="18sp" />
 
                     <EditText
@@ -43,13 +44,14 @@
 
                 <TableRow
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent" >
+                    android:layout_height="match_parent"
+                    android:layout_margin="10dp">
 
                     <TextView
                         android:id="@+id/lengthLabel"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Length"
+                        android:text="@string/length_string"
                         android:textSize="18sp" />
 
                     <EditText
@@ -63,20 +65,21 @@
                         android:id="@+id/milesLabel"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="miles"
+                        android:text="@string/miles_string"
                         android:textSize="18sp" />
 
                 </TableRow>
 
                 <TableRow
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent" >
+                    android:layout_height="match_parent"
+                    android:layout_margin="10dp">
 
                     <TextView
                         android:id="@+id/difficultyLabel"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Difficulty"
+                        android:text="@string/difficulty_string"
                         android:textSize="18sp" />
 
                     <EditText
@@ -97,34 +100,35 @@
             android:layout_height="0dp"
             android:layout_weight="1">
 
-            <RelativeLayout
-                android:layout_width="match_parent"
-                android:layout_height="match_parent">
+            <!-- Column 1 -->
+            <Button
+                android:id="@+id/basicPreviousButton"
+                style="@android:style/Widget.DeviceDefault.Button.Borderless"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:padding="8dp"
+                android:text="@string/previous_string" />
 
-                <Button
-                    android:id="@+id/basicPreviousButton"
-                    style="@android:style/Widget.DeviceDefault.Button.Borderless"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_alignParentLeft="true"
-                    android:layout_marginRight="0dp"
-                    android:onClick="previousStep"
-                    android:padding="8dp"
-                    android:text="Previous" />
+            <!-- Column 2 -->
+            <Button
+                android:id="@+id/basicCancelButton"
+                style="@android:style/Widget.DeviceDefault.Button.Borderless"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:padding="8dp"
+                android:text="@string/cancel_string" />
 
-                <Button
-                    android:id="@+id/basicNextButton"
-                    style="@android:style/Widget.DeviceDefault.Button.Borderless"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_alignParentRight="true"
-                    android:layout_marginLeft="0dp"
-                    android:onClick="nextStep"
-                    android:padding="8dp"
-                    android:text="Next" />
-
-            </RelativeLayout>
-
+            <!-- Column 3 -->
+            <Button
+                android:id="@+id/basicNextButton"
+                style="@android:style/Widget.DeviceDefault.Button.Borderless"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:padding="8dp"
+                android:text="@string/next_string" />
         </TableRow>
     </LinearLayout>
 

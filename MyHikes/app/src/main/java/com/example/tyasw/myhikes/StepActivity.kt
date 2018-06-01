@@ -4,14 +4,12 @@ import android.content.res.Configuration
 import android.content.res.Resources
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
-import android.widget.LinearLayout
-import android.widget.TableRow
+import android.widget.*
 
 abstract class StepActivity: AppCompatActivity() {
-
     private var pixelDensity: Float = 0.toFloat()
-    private var verticalDimensionsSet: Boolean = false
-    private var horizontalDimensionsSet: Boolean = false
+    protected var verticalDimensionsSet: Boolean = false
+    protected var horizontalDimensionsSet: Boolean = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -32,7 +30,7 @@ abstract class StepActivity: AppCompatActivity() {
     }
 
     // Make sure that the button row at the bottom of the activity is large enough
-    protected fun setLayoutMargins(buttonRow: TableRow) {
+    protected fun setButtonRowParameters(buttonRow: TableRow) {
         val buttonRowWeight = when (verticalDimensionsSet) {
             true -> 1f
             false -> 2f
@@ -45,14 +43,24 @@ abstract class StepActivity: AppCompatActivity() {
         )
     }
 
+    open protected fun setLayoutMargins(vararg elements: TextView) {
+
+    }
+
     override fun onConfigurationChanged(newConfig: Configuration) {
         if (!verticalDimensionsSet || !horizontalDimensionsSet)
             checkDimensions(newConfig)
     }
 
     // Set the margins of an item, converting pixels to dp in the process
-    protected fun setLayout(left: Int, top: Int, right: Int, bottom: Int): TableRow.LayoutParams {
-        val params = TableRow.LayoutParams(TableRow.LayoutParams.WRAP_CONTENT, TableRow.LayoutParams.WRAP_CONTENT)
+    protected fun setRadioButtonLayout(left: Int, top: Int, right: Int, bottom: Int): RadioGroup.LayoutParams {
+        val params = RadioGroup.LayoutParams(RadioGroup.LayoutParams.WRAP_CONTENT, RadioGroup.LayoutParams.WRAP_CONTENT)
+        params.setMargins(pxToDP(left), pxToDP(top), pxToDP(right), pxToDP(bottom))
+        return params
+    }
+
+    protected fun setTableLayout(left: Int, top: Int, right: Int, bottom: Int): TableLayout.LayoutParams {
+        val params = TableLayout.LayoutParams(TableLayout.LayoutParams.WRAP_CONTENT, TableLayout.LayoutParams.WRAP_CONTENT)
         params.setMargins(pxToDP(left), pxToDP(top), pxToDP(right), pxToDP(bottom))
         return params
     }

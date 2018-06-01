@@ -15,6 +15,10 @@ import com.google.android.gms.maps.SupportMapFragment
 import kotlinx.android.synthetic.main.activity_maps.*
 
 class MapsActivity : StepActivity(), OnMapReadyCallback {
+    private var receivedHike: Hike? = null
+    private var supplies: ArrayList<Supply>? = null
+    private var contacts: ArrayList<Contact>? = null
+    private var isNewHike: Boolean = true
 
     private val LOCATION_REQUEST_CODE = 101
     private lateinit var mMap: GoogleMap
@@ -22,6 +26,19 @@ class MapsActivity : StepActivity(), OnMapReadyCallback {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_maps)
+
+        val extras = intent.extras
+
+        isNewHike = extras.getBoolean("isNewHike")
+
+        receivedHike = intent.getParcelableExtra<Hike>("newHike") ?: null
+        supplies = intent.getParcelableArrayListExtra<Supply>("supplies") ?: null
+        contacts = intent.getParcelableArrayListExtra<Contact>("contacts") ?: null
+
+        if (isNewHike) {
+            receivedHike.let { receivedHike -> populateInfo(receivedHike) }
+        }
+
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
         val mapFragment = supportFragmentManager
                 .findFragmentById(R.id.map) as SupportMapFragment
@@ -36,7 +53,13 @@ class MapsActivity : StepActivity(), OnMapReadyCallback {
             nextStep()
         }
 
-        setLayoutMargins(buttonRow)
+        setButtonRowParameters(buttonRow)
+    }
+
+    private fun populateInfo(hike: Hike?) {
+        if (hike != null) {
+
+        }
     }
 
     /**
@@ -91,11 +114,33 @@ class MapsActivity : StepActivity(), OnMapReadyCallback {
 
     private fun previousStep() {
         val i = Intent(this, SuppliesActivity::class.java)
+
+        if (isNewHike) {
+            i.putExtra("isNewHike", true)
+        } else {
+            i.putExtra("isNewHike", false)
+        }
+
+        i.putExtra("newHike", receivedHike)
+        i.putExtra("supplies", supplies)
+        i.putExtra("contacts", contacts)
+
         startActivity(i)
     }
 
     private fun nextStep() {
         val i = Intent(this, ContactsActivity::class.java)
+
+        if (isNewHike) {
+            i.putExtra("isNewHike", true)
+        } else {
+            i.putExtra("isNewHike", false)
+        }
+
+        i.putExtra("newHike", receivedHike)
+        i.putExtra("supplies", supplies)
+        i.putExtra("contacts", contacts)
+
         startActivity(i)
     }
 

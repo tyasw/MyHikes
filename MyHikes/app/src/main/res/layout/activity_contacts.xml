@@ -30,35 +30,34 @@
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:layout_weight="1">
+            <Button
+                android:id="@+id/contactsPreviousButton"
+                style="@android:style/Widget.DeviceDefault.Button.Borderless"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:onClick="previousStep"
+                android:padding="8dp"
+                android:text="@string/previous_string" />
 
-            <RelativeLayout
-                android:layout_width="match_parent"
-                android:layout_height="match_parent">
+            <Button
+                android:id="@+id/contactsCancelButton"
+                style="@android:style/Widget.DeviceDefault.Button.Borderless"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:padding="8dp"
+                android:text="@string/cancel_string" />
 
-                <Button
-                    android:id="@+id/contactsPreviousButton"
-                    style="@android:style/Widget.DeviceDefault.Button.Borderless"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_alignParentLeft="true"
-                    android:layout_marginRight="0dp"
-                    android:onClick="previousStep"
-                    android:padding="8dp"
-                    android:text="Previous" />
-
-                <Button
-                    android:id="@+id/contactsNextButton"
-                    style="@android:style/Widget.DeviceDefault.Button.Borderless"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_alignParentRight="true"
-                    android:layout_marginLeft="0dp"
-                    android:onClick="nextStep"
-                    android:padding="8dp"
-                    android:text="Next" />
-
-            </RelativeLayout>
-
+            <Button
+                android:id="@+id/contactsNextButton"
+                style="@android:style/Widget.DeviceDefault.Button.Borderless"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:onClick="nextStep"
+                android:padding="8dp"
+                android:text="@string/next_string" />
         </TableRow>
     </LinearLayout>
 

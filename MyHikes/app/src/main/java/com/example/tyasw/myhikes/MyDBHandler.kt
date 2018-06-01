@@ -16,18 +16,14 @@ class MyDBHandler(context: Context, name: String?,
     override fun onCreate(db: SQLiteDatabase) {
         db.execSQL(CREATE_HIKES_TABLE)
         db.execSQL(CREATE_SUPPLIES_TABLE)
-        db.execSQL(CREATE_SUPPLYTYPES_TABLE)
         db.execSQL(CREATE_CONTACTS_TABLE)
-        db.execSQL(CREATE_CONTACTINFO_TABLE)
         db.execSQL(CREATE_ACCOUNTS_TABLE)
     }
 
     override fun onUpgrade(db: SQLiteDatabase, oldVersion: Int, newVersion: Int) {
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_HIKES)
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_SUPPLIES)
-        db.execSQL("DROP TABLE IF EXISTS " + TABLE_SUPPLYTYPES)
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_CONTACTS)
-        db.execSQL("DROP TABLE IF EXISTS " + TABLE_CONTACTINFO)
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_ACCOUNTS)
 
         onCreate(db)
@@ -36,7 +32,6 @@ class MyDBHandler(context: Context, name: String?,
     // ------------------------ HIKES table methods -------------------------//
     fun addHike(hike: Hike) {
         val values = ContentValues()
-        //values.put(HIKES_COLUMN_ID, hike.id)
         values.put(HIKES_USER_ID, hike.userId)
         values.put(HIKES_NAME, hike.name)
         values.put(HIKES_LENGTH, hike.length)
@@ -98,8 +93,10 @@ class MyDBHandler(context: Context, name: String?,
             val name = cursor.getString(2)
             val length = cursor.getString(3).toDouble()
             val difficulty = cursor.getString(4)
+            val latitude = cursor.getDouble(5)
+            val longitude = cursor.getDouble(6)
 
-            hike = Hike(hikeId, user, name, length, difficulty)
+            hike = Hike(hikeId, user, name, length, difficulty, latitude, longitude)
             cursor.close()
         }
         db.close()
@@ -119,8 +116,10 @@ class MyDBHandler(context: Context, name: String?,
             val name = cursor.getString(2)
             val length = cursor.getString(3).toDouble()
             val difficulty = cursor.getString(4)
+            val latitude = cursor.getDouble(5)
+            val longitude = cursor.getDouble(6)
 
-            hike = Hike(hikeId, userId, name, length, difficulty)
+            hike = Hike(hikeId, userId, name, length, difficulty, latitude, longitude)
             cursor.close()
         }
         db.close()
@@ -142,7 +141,10 @@ class MyDBHandler(context: Context, name: String?,
             val name = cursor.getString(2)
             val length = cursor.getString(3).toDouble()
             val difficulty = cursor.getString(4)
-            val hike = Hike(id, userId, name, length, difficulty)
+            val latitude = cursor.getDouble(5)
+            val longitude = cursor.getDouble(6)
+
+            val hike = Hike(id, userId, name, length, difficulty, latitude, longitude)
             hikes.add(hike)
         }
         cursor.close()
@@ -150,19 +152,23 @@ class MyDBHandler(context: Context, name: String?,
         return hikes
     }
 
-    // Update db with changes, might need to update SUPPLIES, SUPPLYTYPES,
-    // CONTACTS, AND CONTACTINFO as well with new supplies and contacts
+    // Update db with changes, might need to update SUPPLIES and CONTACTS,
+    // as well with new supplies and contacts
     fun modifyHike(hike: Hike) {
         val hikeId = hike.id
         var userId = hike.userId
         val name = hike.name
         val length = hike.length
         val difficulty = hike.difficulty
+        val latitude = hike.latitude
+        val longitude = hike.longitude
 
         val query = "UPDATE $TABLE_HIKES " +
                 "SET $HIKES_NAME = \"$name\", " +
                 "$HIKES_LENGTH = \"$length\", " +
-                "$HIKES_DIFFICULTY = \"$difficulty\" " +
+                "$HIKES_DIFFICULTY = \"$difficulty\", " +
+                "$HIKES_LATITUDE = \"$latitude\", " +
+                "$HIKES_LONGITUDE = \"$longitude\" "
                 "WHERE $HIKES_COLUMN_ID = \"$hikeId\""
 
         val db = this.writableDatabase
@@ -173,8 +179,8 @@ class MyDBHandler(context: Context, name: String?,
     // ------------------------- SUPPLY table methods -------------------------//
     fun addSupply(supply: Supply) {
         val values = ContentValues()
-        values.put(SUPPLY_ID, supply.supplyId)
         values.put(HIKE_ID, supply.hikeId)
+        values.put(SUPPLY_NAME, supply.name)
         values.put(SUPPLY_QUANTITY, supply.quantity)
 
         val db = this.writableDatabase
@@ -192,9 +198,8 @@ class MyDBHandler(context: Context, name: String?,
         val cursor = db.rawQuery(query, null)
 
         if (cursor.moveToFirst()) {
-            // SQL should automatically delete entries with foreign keys referencing this one?
-            val supplyTableId = Integer.parseInt(cursor.getString(0))
-            db.delete(TABLE_SUPPLYTYPES, SUPPLYTYPES_ID + " = ?", arrayOf(supplyTableId.toString()))
+            val supplyId = Integer.parseInt(cursor.getString(0))
+            db.delete(TABLE_SUPPLIES, SUPPLY_ID + " = ?", arrayOf(supplyId.toString()))
             cursor.close()
             result = true
         }
@@ -204,16 +209,16 @@ class MyDBHandler(context: Context, name: String?,
     }
 
     fun modifySupply(supply: Supply) {
-        var id = supply.id
-        var supplyId = supply.supplyId
-        var hikeId = supply.hikeId
-        var quantity = supply.quantity
+        val id = supply.id
+        val hikeId = supply.hikeId
+        val name = supply.name
+        val quantity = supply.quantity
 
-        // Hopefully, SQL will cascade this to other referencing tables
         val query = "UPDATE $TABLE_SUPPLIES " +
-                "SET $SUPPLY_ID = \"$supplyId\", " +
-                "$HIKE_ID = \"$hikeId\" "
-                "WHERE $SUPPLY_COLUMN_ID = \"$id\""
+                "SET $HIKE_ID = \"$hikeId\", " +
+                "$SUPPLY_NAME = \"$name\", " +
+                "$SUPPLY_QUANTITY = \"$quantity\" "
+                "WHERE $SUPPLY_ID = \"$id\""
 
         val db = this.writableDatabase
         db.execSQL(query)
@@ -221,7 +226,7 @@ class MyDBHandler(context: Context, name: String?,
     }
 
     fun findAllSupplies(hike: Int): List<Supply> {
-        val query = "SELECT * FROM $TABLE_HIKES WHERE $HIKE_ID = \"$hike\""
+        val query = "SELECT * FROM $TABLE_SUPPLIES WHERE $HIKE_ID = \"$hike\""
 
         val db = this.writableDatabase
         val cursor = db.rawQuery(query, null)
@@ -230,80 +235,16 @@ class MyDBHandler(context: Context, name: String?,
 
         while (cursor.moveToNext()) {
             val id = Integer.parseInt(cursor.getString(0))
-            val supplyId = Integer.parseInt(cursor.getString(1))
-            val hikeId = Integer.parseInt(cursor.getString(2))
+            val hikeId = Integer.parseInt(cursor.getString(1))
+            val name = cursor.getString(2)
             val quantity = cursor.getString(3).toDouble()
 
-            val supply = Supply(id, supplyId, hikeId, quantity)
+            val supply = Supply(id, hikeId, name, quantity)
             supplies.add(supply)
         }
         cursor.close()
         db.close()
         return supplies
-    }
-
-    // ----------------------- SUPPLYTYPE table methods -----------------------//
-    fun addSupplyType(supplyType: SupplyType) {
-        val values = ContentValues()
-        values.put(SUPPLYTYPES_ID, supplyType.id)
-        values.put(SUPPLYTYPES_NAME, supplyType.name)
-
-        val db = this.writableDatabase
-        db.insert(TABLE_SUPPLYTYPES, null, values)
-        db.close()
-    }
-
-    fun deleteSupplyType(supplyTypeName: String) : Boolean {
-        var result = false
-
-        val query = "SELECT * FROM $TABLE_SUPPLYTYPES WHERE $SUPPLYTYPES_NAME = \"$supplyTypeName\""
-
-        val db = this.writableDatabase
-
-        val cursor = db.rawQuery(query, null)
-
-        if (cursor.moveToFirst()) {
-            // SQL should automatically delete entries with foreign keys referencing this one?
-            val id = Integer.parseInt(cursor.getString(0))
-            db.delete(TABLE_SUPPLYTYPES, SUPPLYTYPES_ID + " = ?", arrayOf(id.toString()))
-            cursor.close()
-            result = true
-        }
-
-        db.close()
-        return result
-    }
-
-    fun modifySupplyType(supplyType: SupplyType) {
-        val id = supplyType.id
-        val supplyName = supplyType.name
-
-        // Hopefully, SQL will cascade this to other referencing tables
-        val query = "UPDATE $TABLE_SUPPLYTYPES " +
-                "SET $SUPPLYTYPES_NAME = \"$supplyName\" " +
-                "WHERE $SUPPLYTYPES_ID = \"$id\""
-
-        val db = this.writableDatabase
-        db.execSQL(query)
-        db.close()
-    }
-
-    fun findSupplyType(id: Int): SupplyType? {
-        val query = "SELECT * FROM $TABLE_SUPPLYTYPES WHERE $SUPPLYTYPES_ID = $id"
-        val db = this.writableDatabase
-        val cursor = db.rawQuery(query, null)
-
-        var supplyType : SupplyType? = null
-
-        if (cursor.moveToFirst()) {
-            val supplyTypeId = Integer.parseInt(cursor.getString(0))
-            val name = cursor.getString(1)
-
-            supplyType = SupplyType(supplyTypeId, name)
-            cursor.close()
-        }
-        db.close()
-        return supplyType
     }
 
     // ----------------------- CONTACTS table methods -----------------------//
@@ -312,14 +253,14 @@ class MyDBHandler(context: Context, name: String?,
         val values = ContentValues()
         values.put(CONTACT_ID, contact.contactId)
         values.put(CONTACT_HIKE_ID, contact.hikeId)
+        values.put(CONTACT_NAME, contact.name)
+        values.put(CONTACT_PHONE, contact.phone)
 
         val db = this.writableDatabase
         db.insert(TABLE_CONTACTS, null, values)
         db.close()
     }
 
-    // Remove the relationship between a contact and a hike, get id from
-    // CONTACTINFO entry
     fun deleteContact(id: Int) : Boolean {
         var result = false
 
@@ -332,7 +273,7 @@ class MyDBHandler(context: Context, name: String?,
         if (cursor.moveToFirst()) {
             // SQL should automatically delete entries with foreign keys referencing this one?
             val contactId = Integer.parseInt(cursor.getString(0))
-            db.delete(TABLE_SUPPLYTYPES, SUPPLYTYPES_ID + " = ?", arrayOf(contactId.toString()))
+            db.delete(TABLE_CONTACTS, CONTACT_ID + " = ?", arrayOf(contactId.toString()))
             cursor.close()
             result = true
         }
@@ -341,28 +282,24 @@ class MyDBHandler(context: Context, name: String?,
         return result
     }
 
-    // PROBABLY WON'T USE THIS, NO NEED TO MODIFY ANYTHING, BUT WE'LL
-    // DO IT ANYWAY
-    // Don't need to modify, delete old entry, and replace with new one
-    fun modifyContact(id: Int) {
-        val query = "SELECT * FROM $TABLE_CONTACTS WHERE $CONTACT_ID = \"$id\""
 
-        val db = this.writableDatabase
-
-        val cursor = db.rawQuery(query, null)
-
-        if (cursor.moveToFirst()) {
-            val contactId = Integer.parseInt(cursor.getString(0))
-            val hikeId = Integer.parseInt(cursor.getString(1))
-            val newContact = Contact(contactId, hikeId)
-
-            deleteContact(contactId)
-            addContact(newContact)
-
-            cursor.close()
-        }
-        db.close()
-    }
+    // Will not be used, user can edit contacts using built-in Android apps
+//    fun modifyContact(contact: Contact) {
+//        val contactId = contact.contactId
+//        val hikeId = contact.hikeId
+//        val name = contact.name
+//        val phone = contact.phone
+//
+//        val query = "UPDATE $TABLE_CONTACTS " +
+//                "SET $CONTACT_HIKE_ID = \"$hikeId\", " +
+//                "$CONTACT_NAME = \"$name\", " +
+//                "$CONTACT_PHONE = \"$phone\" " +
+//                "WHERE $CONTACT_ID = \"$contactId\""
+//
+//        val db = this.writableDatabase
+//        db.execSQL(query)
+//        db.close()
+//    }
 
     fun findAllContacts(id: Int): List<Contact> {
         val query = "SELECT * FROM $TABLE_CONTACTS WHERE $CONTACT_HIKE_ID = \"$id\""
@@ -375,8 +312,10 @@ class MyDBHandler(context: Context, name: String?,
         while (cursor.moveToNext()) {
             val contactId = Integer.parseInt(cursor.getString(0))
             val hikeId = Integer.parseInt(cursor.getString(1))
+            val name = cursor.getString(2)
+            val phone = cursor.getString(3)
 
-            val contact = Contact(contactId, hikeId)
+            val contact = Contact(contactId, hikeId, name, phone)
             contacts.add(contact)
         }
         cursor.close()
@@ -384,41 +323,6 @@ class MyDBHandler(context: Context, name: String?,
         return contacts
     }
 
-    // ---------------------- CONTACTINFO table methods ---------------------//
-    // There are no methods to modify or lookup contacts, so that a
-    // malicious user can't look up the contact information of people not
-    // part of the current hiking plan
-
-    fun addContactInfo(contactInfo: ContactInfo) {
-        val values = ContentValues()
-        values.put(CONTACTINFO_ID, contactInfo.id)
-        values.put(CONTACT_NAME, contactInfo.name)
-        values.put(CONTACT_PHONE, contactInfo.phone)
-
-        val db = this.writableDatabase
-        db.insert(TABLE_CONTACTINFO, null, values)
-        db.close()
-    }
-
-    fun deleteContactInfo(id: Int) : Boolean {
-        var result = false
-
-        val query = "SELECT * FROM $TABLE_CONTACTINFO WHERE $CONTACTINFO_ID = \"$id\""
-
-        val db = this.writableDatabase
-
-        val cursor = db.rawQuery(query, null)
-
-        if (cursor.moveToFirst()) {
-            val contactInfoId = Integer.parseInt(cursor.getString(0))
-            db.delete(TABLE_CONTACTINFO, CONTACTINFO_ID + " = ?", arrayOf(contactInfoId.toString()))
-            cursor.close()
-            result = true
-        }
-
-        db.close()
-        return result
-    }
 
     // ----------------------- ACCOUNTS table methods -----------------------//
     // There are no methods currently to modify or view account information,
@@ -456,14 +360,12 @@ class MyDBHandler(context: Context, name: String?,
 
     companion object {
         private val DATABASE_VERSION = 1
-        private val DATABASE_NAME = "bookDB.db"
+        private val DATABASE_NAME = "hikesDB.db"
 
         // Table names
         val TABLE_HIKES = "hikes"
         val TABLE_SUPPLIES = "supplies"
-        val TABLE_SUPPLYTYPES = "supplyTypes"
         val TABLE_CONTACTS = "contacts"
-        val TABLE_CONTACTINFO = "contactInfo"
         val TABLE_ACCOUNTS = "accounts"
 
         // HIKES table columns
@@ -472,24 +374,19 @@ class MyDBHandler(context: Context, name: String?,
         val HIKES_NAME = "name"
         val HIKES_LENGTH = "length"
         val HIKES_DIFFICULTY = "difficulty"
+        val HIKES_LATITUDE = "latitude"
+        val HIKES_LONGITUDE = "longitude"
 
         // SUPPLIES table columns
-        val SUPPLY_COLUMN_ID = "_id"
-        val SUPPLY_ID = "supplyId"
+        val SUPPLY_ID = "_id"
         val HIKE_ID = "hikeId"
+        val SUPPLY_NAME = "name"
         val SUPPLY_QUANTITY = "quantity"
-
-        // SUPPLYTYPES table columns
-        val SUPPLYTYPES_ID = "_id"
-        val SUPPLYTYPES_NAME = "name"
 
         // CONTACTS table columns
         // might need to update to reflect primary key
-        val CONTACT_ID = "contactId"
+        val CONTACT_ID = "_id"
         val CONTACT_HIKE_ID = "hikeId"      // Maybe just reuse HIKE_ID
-
-        // CONTACTINFO table columns
-        val CONTACTINFO_ID = "_id"
         val CONTACT_NAME = "name"
         val CONTACT_PHONE = "phone"
 
@@ -505,33 +402,23 @@ class MyDBHandler(context: Context, name: String?,
                 + HIKES_USER_ID + " INTEGER,"
                 + HIKES_NAME + " TEXT,"
                 + HIKES_LENGTH + " REAL,"
-                + HIKES_DIFFICULTY + " TEXT"
+                + HIKES_DIFFICULTY + " TEXT,"
+                + HIKES_LATITUDE + " REAL,"
+                + HIKES_LONGITUDE + " REAL"
                 + ")")
 
         val CREATE_SUPPLIES_TABLE = ("CREATE TABLE " + TABLE_SUPPLIES
                 + "("
-                + SUPPLY_ID + " INTEGER,"
+                + SUPPLY_ID + " INTEGER PRIMARY KEY,"
                 + HIKE_ID + " INTEGER,"
-                + SUPPLY_QUANTITY + " REAL,"
-                + "PRIMARY KEY ($SUPPLY_ID, $HIKE_ID)"
-                + ")")
-
-        val CREATE_SUPPLYTYPES_TABLE = ("CREATE TABLE " + TABLE_SUPPLYTYPES
-                + "("
-                + SUPPLYTYPES_ID + " INTEGER PRIMARY KEY,"
-                + SUPPLYTYPES_NAME + " TEXT"
+                + HIKES_NAME + " TEXT,"
+                + SUPPLY_QUANTITY + " REAL"
                 + ")")
 
         val CREATE_CONTACTS_TABLE = ("CREATE TABLE " + TABLE_CONTACTS
                 + "("
-                + CONTACT_ID + " INTEGER,"
+                + CONTACT_ID + " INTEGER PRIMARY KEY,"
                 + CONTACT_HIKE_ID + " INTEGER,"
-                + "PRIMARY KEY ($CONTACT_ID, $CONTACT_HIKE_ID)"
-                + ")")
-
-        val CREATE_CONTACTINFO_TABLE = ("CREATE TABLE " + TABLE_CONTACTINFO
-                + "("
-                + CONTACTINFO_ID + " INTEGER PRIMARY KEY,"
                 + CONTACT_NAME + " TEXT,"
                 + CONTACT_PHONE + " TEXT"
                 + ")")

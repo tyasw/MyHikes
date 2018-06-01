@@ -4,4 +4,12 @@
 
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="hike_name">Hike Name</string>
+    <string name="length_string">Length</string>
+    <string name="miles_string">miles</string>
+    <string name="difficulty_string">Difficulty</string>
+    <string name="previous_string">Previous</string>
+    <string name="cancel_string">Cancel</string>
+    <string name="next_string">Next</string>
+    <string name="finish_string">Finish</string>
 </resources>
