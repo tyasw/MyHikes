@@ -71,8 +71,6 @@ class NotificationActivity : StepActivity() {
 
         // Send text
 
-        // Go back to MainActivity
-
         val i = Intent(this, MainActivity::class.java)
 
         if (isNewHike) {
@@ -89,6 +87,26 @@ class NotificationActivity : StepActivity() {
     }
 
     private fun updateDatabase() {
+        if (isNewHike) {
+            // Create new entries
+            val dbHandler = MyDBHandler(this, null, null, 1)
+            dbHandler.addHike(receivedHike!!)
 
+            val hikeEntry = dbHandler.findHike(1, receivedHike!!.name)
+
+            val hikeId = hikeEntry?.id
+
+            for (i in supplies!!.indices) {
+                //supplies!![i].hikeId = hikeId
+                //dbHandler.addSupply(supplies!![i])
+            }
+
+            for (i in contacts!!.indices) {
+                //contacts!![i].hikeId = hikeId
+                //dbHandler.addContact(contacts!![i])
+            }
+        } else {
+            // Update old ones and create new ones as necessary
+        }
     }
 }

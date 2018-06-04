@@ -225,7 +225,7 @@ class MyDBHandler(context: Context, name: String?,
         db.close()
     }
 
-    fun findAllSupplies(hike: Int): List<Supply> {
+    fun findAllSupplies(hike: Int): ArrayList<Supply> {
         val query = "SELECT * FROM $TABLE_SUPPLIES WHERE $HIKE_ID = \"$hike\""
 
         val db = this.writableDatabase
@@ -301,7 +301,7 @@ class MyDBHandler(context: Context, name: String?,
 //        db.close()
 //    }
 
-    fun findAllContacts(id: Int): List<Contact> {
+    fun findAllContacts(id: Int): ArrayList<Contact> {
         val query = "SELECT * FROM $TABLE_CONTACTS WHERE $CONTACT_HIKE_ID = \"$id\""
 
         val db = this.writableDatabase

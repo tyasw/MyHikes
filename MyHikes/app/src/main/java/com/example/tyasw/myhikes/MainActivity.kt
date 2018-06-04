@@ -80,6 +80,7 @@ class MainActivity : StepActivity() {
         for (hike in hikesList) {
             //val row = TableRow(this)
             val radioButton = RadioButton(this)
+            radioButton.id = hike.id
             radioButton.text = hike.name
             radioButton.textSize = 18f
             radioButton.layoutParams = setRadioButtonLayout(20, 20, 0, 0)
@@ -108,7 +109,7 @@ class MainActivity : StepActivity() {
 
         val i = Intent(this, BasicInfoActivity::class.java)
         i.putExtra("isNewHike", true)
-        i.putExtra("newHike", newHike)
+        i.putExtra("hike", newHike)
         i.putExtra("supplies", supplies)
         i.putExtra("contacts", contacts)
         startActivity(i)
@@ -116,7 +117,18 @@ class MainActivity : StepActivity() {
 
     // Load from DB
     private fun nextStep() {
+        val dbHandler = MyDBHandler(this, null, null, 1)
+
+        // Get hike name from the radio button that is selected
+        val oldHike = dbHandler.findHike(SAMPLE_USER_ID, "enter hike name here")
+        val supplies = dbHandler.findAllSupplies(oldHike!!.id)
+        val contacts = dbHandler.findAllContacts(oldHike!!.id)
+
         val i = Intent(this, BasicInfoActivity::class.java)
+        i.putExtra("isNewHike", false)
+        i.putExtra("hike", oldHike)
+        i.putExtra("supplies", supplies)
+        i.putExtra("contacts", contacts)
         startActivity(i)
     }
 }

@@ -10,9 +10,9 @@ import android.os.Parcelable
 class Hike : Parcelable {
     var id: Int = 0
     var userId: Int = 0
-    var name: String? = null
+    var name: String = ""
     var length: Double = 0.0
-    var difficulty: String? = null
+    var difficulty: String = ""
     var latitude: Double = 0.0
     var longitude: Double = 0.0
 
