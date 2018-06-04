@@ -24,9 +24,7 @@ class ContactsActivity : StepActivity() {
         supplies = intent.getParcelableArrayListExtra<Supply>("supplies") ?: null
         contacts = intent.getParcelableArrayListExtra<Contact>("contacts") ?: null
 
-        if (isNewHike) {
-            receivedHike.let { receivedHike -> populateInfo(receivedHike) }
-        }
+        setUpContactsList()
 
         contactsPreviousButton.setOnClickListener {
             previousStep()
@@ -39,10 +37,7 @@ class ContactsActivity : StepActivity() {
         setButtonRowParameters(buttonRow)
     }
 
-    private fun populateInfo(hike: Hike?) {
-        if (hike != null) {
-
-        }
+    private fun setUpContactsList() {
     }
 
     override fun onConfigurationChanged(newConfig: Configuration) {

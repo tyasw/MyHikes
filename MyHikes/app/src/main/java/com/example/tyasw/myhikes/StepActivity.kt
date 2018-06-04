@@ -59,13 +59,17 @@ abstract class StepActivity: AppCompatActivity() {
         return params
     }
 
-    protected fun setTableLayout(left: Int, top: Int, right: Int, bottom: Int): TableLayout.LayoutParams {
-        val params = TableLayout.LayoutParams(TableLayout.LayoutParams.WRAP_CONTENT, TableLayout.LayoutParams.WRAP_CONTENT)
+    protected fun setTableLayout(left: Int, top: Int, right: Int, bottom: Int): TableRow.LayoutParams {
+        val params = TableRow.LayoutParams(TableLayout.LayoutParams.WRAP_CONTENT, TableLayout.LayoutParams.WRAP_CONTENT)
         params.setMargins(pxToDP(left), pxToDP(top), pxToDP(right), pxToDP(bottom))
         return params
     }
 
-    private fun pxToDP(dp: Int): Int {
+    protected fun pxToDP(dp: Int): Int {
         return dp * Resources.getSystem().displayMetrics.density.toInt()
+    }
+
+    protected fun dpToPx(px: Int): Int {
+        return px / Resources.getSystem().displayMetrics.density.toInt()
     }
 }

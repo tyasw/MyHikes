@@ -66,7 +66,10 @@ class MainActivity : StepActivity() {
             val row = TableRow(this)
             val noResults = TextView(this)
             noResults.text = "There are currently no hikes"
+
             noResults.layoutParams = setTableLayout(20, 20, 0, 0)
+            //row.layoutParams = setTableLayout(20, 20, 0, 0)
+
             noResults.textSize = 18f
 
             row.addView(noResults)
