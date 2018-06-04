@@ -20,7 +20,7 @@ class ContactsActivity : StepActivity() {
 
         isNewHike = extras.getBoolean("isNewHike")
 
-        receivedHike = intent.getParcelableExtra<Hike>("newHike") ?: null
+        receivedHike = intent.getParcelableExtra<Hike>("hike") ?: null
         supplies = intent.getParcelableArrayListExtra<Supply>("supplies") ?: null
         contacts = intent.getParcelableArrayListExtra<Contact>("contacts") ?: null
 
@@ -64,7 +64,7 @@ class ContactsActivity : StepActivity() {
             i.putExtra("isNewHike", false)
         }
 
-        i.putExtra("newHike", receivedHike)
+        i.putExtra("hike", receivedHike)
         i.putExtra("supplies", supplies)
         i.putExtra("contacts", contacts)
 
@@ -90,7 +90,7 @@ class ContactsActivity : StepActivity() {
             i.putExtra("isNewHike", false)
         }
 
-        i.putExtra("newHike", receivedHike)
+        i.putExtra("hike", receivedHike)
         i.putExtra("supplies", supplies)
         i.putExtra("contacts", contacts)
 

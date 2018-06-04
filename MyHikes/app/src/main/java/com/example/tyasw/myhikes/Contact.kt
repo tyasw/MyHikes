@@ -7,13 +7,13 @@ import android.os.Parcelable
  * Created by tyasw on 5/29/18.
  */
 class Contact : Parcelable{
-    var contactId: Int = 0
+    var id: Int = 0
     var hikeId: Int = 0
     var name: String? = null
     var phone: String? = null
 
     constructor(parcel: Parcel) {
-        this.contactId = parcel.readInt()
+        this.id = parcel.readInt()
         this.hikeId = parcel.readInt()
         this.name = parcel.readString()
         this.phone = parcel.readString()
@@ -21,7 +21,7 @@ class Contact : Parcelable{
 
     // Can be written in any order
     override fun writeToParcel(dest: Parcel, flags: Int) {
-        dest.writeInt(contactId)
+        dest.writeInt(id)
         dest.writeInt(hikeId)
         dest.writeString(name)
         dest.writeString(phone)
@@ -32,7 +32,7 @@ class Contact : Parcelable{
     }
 
     constructor(contactId: Int, hikeId: Int, name: String, phone: String) {
-        this.contactId = contactId
+        this.id = contactId
         this.hikeId = hikeId
         this.name = name
         this.phone = phone

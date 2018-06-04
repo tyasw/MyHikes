@@ -20,13 +20,11 @@ class BasicInfoActivity : StepActivity() {
 
         isNewHike = extras.getBoolean("isNewHike")
 
-        receivedHike = intent.getParcelableExtra<Hike>("newHike") ?: null
+        receivedHike = intent.getParcelableExtra<Hike>("hike") ?: null
         supplies = intent.getParcelableArrayListExtra<Supply>("supplies") ?: null
         contacts = intent.getParcelableArrayListExtra<Contact>("contacts") ?: null
 
-        if (isNewHike) {
-            receivedHike.let { receivedHike -> populateInfo(receivedHike) }
-        }
+        populateInfo(receivedHike)
 
         basicPreviousButton.setOnClickListener {
             previousStep()
@@ -68,7 +66,7 @@ class BasicInfoActivity : StepActivity() {
             i.putExtra("isNewHike", false)
         }
 
-        i.putExtra("newHike", receivedHike)
+        i.putExtra("hike", receivedHike)
         i.putExtra("supplies", supplies)
         i.putExtra("contacts", contacts)
 
@@ -91,7 +89,7 @@ class BasicInfoActivity : StepActivity() {
             i.putExtra("isNewHike", false)
         }
 
-        i.putExtra("newHike", receivedHike)
+        i.putExtra("hike", receivedHike)
         i.putExtra("supplies", supplies)
         i.putExtra("contacts", contacts)
 

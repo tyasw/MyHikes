@@ -20,13 +20,11 @@ class NotificationActivity : StepActivity() {
 
         isNewHike = extras.getBoolean("isNewHike")
 
-        receivedHike = intent.getParcelableExtra<Hike>("newHike") ?: null
+        receivedHike = intent.getParcelableExtra<Hike>("hike") ?: null
         supplies = intent.getParcelableArrayListExtra<Supply>("supplies") ?: null
         contacts = intent.getParcelableArrayListExtra<Contact>("contacts") ?: null
 
-        if (isNewHike) {
-            receivedHike.let { receivedHike -> populateInfo(receivedHike) }
-        }
+        populateInfo(receivedHike)
 
         notificationPreviousButton.setOnClickListener {
             previousStep()
@@ -59,7 +57,7 @@ class NotificationActivity : StepActivity() {
             i.putExtra("isNewHike", false)
         }
 
-        i.putExtra("newHike", receivedHike)
+        i.putExtra("hike", receivedHike)
         i.putExtra("supplies", supplies)
         i.putExtra("contacts", contacts)
 
@@ -79,7 +77,7 @@ class NotificationActivity : StepActivity() {
             i.putExtra("isNewHike", false)
         }
 
-        i.putExtra("newHike", receivedHike)
+        i.putExtra("hike", receivedHike)
         i.putExtra("supplies", supplies)
         i.putExtra("contacts", contacts)
 
@@ -87,9 +85,8 @@ class NotificationActivity : StepActivity() {
     }
 
     private fun updateDatabase() {
-        if (isNewHike) {
-            // Create new entries
-            val dbHandler = MyDBHandler(this, null, null, 1)
+        val dbHandler = MyDBHandler(this, null, null, 1)
+        if (isNewHike) {        // Add new entries
             dbHandler.addHike(receivedHike!!)
 
             val hikeEntry = dbHandler.findHike(1, receivedHike!!.name)
@@ -97,16 +94,34 @@ class NotificationActivity : StepActivity() {
             val hikeId = hikeEntry?.id
 
             for (i in supplies!!.indices) {
-                //supplies!![i].hikeId = hikeId
-                //dbHandler.addSupply(supplies!![i])
+                supplies!![i].hikeId = hikeId!!.toInt()
+                dbHandler.addSupply(supplies!![i])
             }
 
             for (i in contacts!!.indices) {
-                //contacts!![i].hikeId = hikeId
-                //dbHandler.addContact(contacts!![i])
+                contacts!![i].hikeId = hikeId!!.toInt()
+                dbHandler.addContact(contacts!![i])
             }
-        } else {
-            // Update old ones and create new ones as necessary
+        } else {    // update old entries and create new ones as necessary
+            dbHandler.modifyHike(receivedHike!!)
+            val hikeEntry = dbHandler.findHike(1, receivedHike!!.name)
+
+            // Just delete old entries for now, much easier than updating
+            val hikeId = hikeEntry?.id
+            if (hikeEntry != null) {
+                dbHandler.deleteAllSupplies(hikeId!!)
+                dbHandler.deleteAllContacts(hikeId!!)
+            }
+
+            for (i in supplies!!.indices) {
+                supplies!![i].hikeId = hikeId!!.toInt()
+                dbHandler.addSupply(supplies!![i])
+            }
+
+            for (i in contacts!!.indices) {
+                contacts!![i].hikeId = hikeId!!.toInt()
+                dbHandler.addContact(contacts!![i])
+            }
         }
     }
 }

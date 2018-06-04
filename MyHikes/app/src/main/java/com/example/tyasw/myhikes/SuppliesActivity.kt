@@ -3,7 +3,9 @@ package com.example.tyasw.myhikes
 import android.content.Intent
 import android.content.res.Configuration
 import android.os.Bundle
+import android.os.PersistableBundle
 import android.support.v4.widget.TextViewCompat
+import android.view.ViewGroup
 import android.widget.LinearLayout
 import android.widget.TableRow
 import android.widget.TextView
@@ -29,7 +31,7 @@ class SuppliesActivity : StepActivity() {
 
         isNewHike = extras.getBoolean("isNewHike")
 
-        receivedHike = intent.getParcelableExtra<Hike>("newHike") ?: null
+        receivedHike = intent.getParcelableExtra<Hike>("hike") ?: null
         supplies = intent.getParcelableArrayListExtra<Supply>("supplies") ?: null
         contacts = intent.getParcelableArrayListExtra<Contact>("contacts") ?: null
 
@@ -50,13 +52,52 @@ class SuppliesActivity : StepActivity() {
         setButtonRowParameters(buttonRow)
     }
 
-    // Populate the list of supplies if items already exist, or create a new one
+    override fun onSaveInstanceState(savedInstanceState: Bundle) {
+        supplies?.clear()
+
+        for (i in names.indices) {
+            val name = names[i].text.toString()
+            val quantity = quantities[i].text.toString().toDouble()
+
+            var supply: Supply? = null
+            if (isNewHike) {
+                supply = Supply(name, quantity)
+            } else {    // set hikeId
+                supply = Supply(receivedHike!!.id, name, quantity)
+            }
+            supplies?.add(supply)
+        }
+
+        if (isNewHike) {
+            savedInstanceState.putBoolean("isNewHike", true)
+        } else {
+            savedInstanceState.putBoolean("isNewHike", false)
+        }
+
+        savedInstanceState.putParcelable("hike", receivedHike)
+        savedInstanceState.putParcelableArrayList("supplies", supplies)
+        savedInstanceState.putParcelableArrayList("contacts", contacts)
+
+        super.onSaveInstanceState(savedInstanceState)
+    }
+
+    override fun onRestoreInstanceState(savedInstanceState: Bundle) {
+        super.onRestoreInstanceState(savedInstanceState)
+
+        isNewHike = savedInstanceState.getBoolean("isNewHike")
+        receivedHike = savedInstanceState.getParcelable("hike")
+        supplies = savedInstanceState.getParcelableArrayList("supplies")
+        contacts = savedInstanceState.getParcelableArrayList("contacts")
+    }
+
     private fun setUpSuppliesList() {
         dbTable.removeAllViews()
 
         val columnTitles = TableRow(this)
 
-        if (!names.isEmpty()) {
+        val newSupplies = supplies
+
+        if ((newSupplies != null && !newSupplies.isEmpty()) || !names.isEmpty()) {
             val nameColumn = TextView(this)
             val quantityColumn = TextView(this)
 
@@ -114,6 +155,34 @@ class SuppliesActivity : StepActivity() {
 
             dbTable.addView(row)
         }
+
+        if (newSupplies != null) {
+            for (supply in newSupplies) {
+                val row = TableRow(this)
+                val name = TextView(this)
+                val quantity = TextView(this)
+
+                name.text = supply.name.toString()
+                quantity.text = supply.quantity.toString()
+
+                setLayoutMargins(name, quantity)
+
+                name.textSize = 18f
+                quantity.textSize = 18f
+
+                name.id = names.lastIndex
+                quantity.id = quantities.lastIndex
+
+                names.add(name)
+                quantities.add(quantity)
+
+                row.addView(name)
+                row.addView(quantity)
+
+                dbTable.addView(row)
+            }
+            newSupplies.clear()
+        }
     }
 
     private fun addSupply() {
@@ -137,8 +206,31 @@ class SuppliesActivity : StepActivity() {
         setUpSuppliesList()
     }
 
+    fun setLayout() {
+        if (verticalDimensionsSet) {
+            val supplyRowParams = TableRow.LayoutParams(TableRow.LayoutParams.MATCH_PARENT, 0, 1f)
+            newSupplyRow.layoutParams = supplyRowParams
+
+            val mainContentRowParams = TableRow.LayoutParams(TableRow.LayoutParams.MATCH_PARENT, 0, 14f)
+            mainContentRow.layoutParams = mainContentRowParams
+
+            val buttonRowParams = TableRow.LayoutParams(TableRow.LayoutParams.MATCH_PARENT, 0, 1f)
+            buttonRow.layoutParams = buttonRowParams
+        } else {
+            val supplyRowParams = TableRow.LayoutParams(TableRow.LayoutParams.MATCH_PARENT, 0, 2f)
+            newSupplyRow.layoutParams = supplyRowParams
+
+            val mainContentRowParams = TableRow.LayoutParams(TableRow.LayoutParams.MATCH_PARENT, 0, 10f)
+            mainContentRow.layoutParams = mainContentRowParams
+
+            val buttonRowParams = TableRow.LayoutParams(TableRow.LayoutParams.MATCH_PARENT, 0, 1f)
+            buttonRow.layoutParams = buttonRowParams
+        }
+    }
+
     override fun setLayoutMargins(vararg elements: TextView) {
         //super.setLayoutMargins(elements)
+        setLayout()
 
         if (verticalDimensionsSet) {
             elements[0].layoutParams = setTableLayout(10, 10, 10, 10)
@@ -159,13 +251,10 @@ class SuppliesActivity : StepActivity() {
             var supply: Supply? = null
             if (isNewHike) {
                 supply = Supply(name, quantity)
-            } else {
-                // set hikeId
-                //supply = Supply(id, name, quantity)
+            } else {    // set hike id
+                supply = Supply(receivedHike!!.id, name, quantity)
             }
-            if (supply != null) {
-                supplies?.add(supply)
-            }
+            supplies?.add(supply)
         }
 
         val i = Intent(this, BasicInfoActivity::class.java)
@@ -176,7 +265,7 @@ class SuppliesActivity : StepActivity() {
             i.putExtra("isNewHike", false)
         }
 
-        i.putExtra("newHike", receivedHike)
+        i.putExtra("hike", receivedHike)
         i.putExtra("supplies", supplies)
         i.putExtra("contacts", contacts)
 
@@ -193,13 +282,10 @@ class SuppliesActivity : StepActivity() {
             var supply: Supply? = null
             if (isNewHike) {
                 supply = Supply(name, quantity)
-            } else {
-                // set hikeId
-                //supply = Supply(id, name, quantity)
+            } else {    // set hikeId
+                supply = Supply(receivedHike!!.id, name, quantity)
             }
-            if (supply != null) {
-                supplies?.add(supply)
-            }
+            supplies?.add(supply)
         }
 
         val i = Intent(this, MapsActivity::class.java)
@@ -210,7 +296,7 @@ class SuppliesActivity : StepActivity() {
             i.putExtra("isNewHike", false)
         }
 
-        i.putExtra("newHike", receivedHike)
+        i.putExtra("hike", receivedHike)
         i.putExtra("supplies", supplies)
         i.putExtra("contacts", contacts)
 

@@ -31,13 +31,11 @@ class MapsActivity : StepActivity(), OnMapReadyCallback {
 
         isNewHike = extras.getBoolean("isNewHike")
 
-        receivedHike = intent.getParcelableExtra<Hike>("newHike") ?: null
+        receivedHike = intent.getParcelableExtra<Hike>("hike") ?: null
         supplies = intent.getParcelableArrayListExtra<Supply>("supplies") ?: null
         contacts = intent.getParcelableArrayListExtra<Contact>("contacts") ?: null
 
-        if (isNewHike) {
-            receivedHike.let { receivedHike -> populateInfo(receivedHike) }
-        }
+        populateInfo(receivedHike)
 
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
         val mapFragment = supportFragmentManager
@@ -121,7 +119,7 @@ class MapsActivity : StepActivity(), OnMapReadyCallback {
             i.putExtra("isNewHike", false)
         }
 
-        i.putExtra("newHike", receivedHike)
+        i.putExtra("hike", receivedHike)
         i.putExtra("supplies", supplies)
         i.putExtra("contacts", contacts)
 
@@ -137,7 +135,7 @@ class MapsActivity : StepActivity(), OnMapReadyCallback {
             i.putExtra("isNewHike", false)
         }
 
-        i.putExtra("newHike", receivedHike)
+        i.putExtra("hike", receivedHike)
         i.putExtra("supplies", supplies)
         i.putExtra("contacts", contacts)
 

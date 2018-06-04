@@ -79,8 +79,8 @@ class MyDBHandler(context: Context, name: String?,
     }
 
     fun findHike(userId: Int, hikeName: String): Hike? {
-        val query = "SELECT * FROM $TABLE_HIKES WHERE $HIKES_USER_ID = $userId " +
-                "AND $HIKES_NAME = $hikeName"
+        val query = "SELECT * FROM $TABLE_HIKES WHERE $HIKES_USER_ID = \"$userId\" " +
+                "AND $HIKES_NAME = \"$hikeName\""
 
         val db = this.writableDatabase
         val cursor = db.rawQuery(query, null)
@@ -127,7 +127,7 @@ class MyDBHandler(context: Context, name: String?,
     }
 
     // Find all hikes that user has created
-    fun findAllHikes(userId: Int): List<Hike> {
+    fun findAllHikes(userId: Int): ArrayList<Hike> {
         val query = "SELECT * FROM $TABLE_HIKES WHERE $HIKES_USER_ID = \"$userId\""
 
         val db = this.writableDatabase
@@ -208,6 +208,20 @@ class MyDBHandler(context: Context, name: String?,
         return result
     }
 
+    fun deleteAllSupplies(hikeId: Int) {
+        val query = "SELECT * FROM $TABLE_SUPPLIES WHERE $HIKE_ID = \"$hikeId\""
+
+        val db = this.writableDatabase
+        val cursor = db.rawQuery(query, null)
+
+        while (cursor.moveToNext()) {
+            val id = Integer.parseInt(cursor.getString(0))
+            db.delete(TABLE_SUPPLIES, HIKE_ID + " = ?", arrayOf(id.toString()))
+        }
+        cursor.close()
+        db.close()
+    }
+
     fun modifySupply(supply: Supply) {
         val id = supply.id
         val hikeId = supply.hikeId
@@ -251,7 +265,7 @@ class MyDBHandler(context: Context, name: String?,
     /* Visit this website: http://www.sqlitetutorial.net/sqlite-primary-key/ */
     fun addContact(contact: Contact) {
         val values = ContentValues()
-        values.put(CONTACT_ID, contact.contactId)
+        values.put(CONTACT_ID, contact.id)
         values.put(CONTACT_HIKE_ID, contact.hikeId)
         values.put(CONTACT_NAME, contact.name)
         values.put(CONTACT_PHONE, contact.phone)
@@ -280,6 +294,20 @@ class MyDBHandler(context: Context, name: String?,
 
         db.close()
         return result
+    }
+
+    fun deleteAllContacts(hikeId: Int) {
+        val query = "SELECT * FROM $TABLE_CONTACTS WHERE $CONTACT_HIKE_ID = \"$hikeId\""
+
+        val db = this.writableDatabase
+        val cursor = db.rawQuery(query, null)
+
+        while (cursor.moveToNext()) {
+            val id = Integer.parseInt(cursor.getString(0))
+            db.delete(TABLE_CONTACTS, CONTACT_HIKE_ID + " = ?", arrayOf(id.toString()))
+        }
+        cursor.close()
+        db.close()
     }
 
 
