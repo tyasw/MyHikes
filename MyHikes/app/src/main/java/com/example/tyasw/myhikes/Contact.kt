@@ -38,6 +38,17 @@ class Contact : Parcelable{
         this.phone = phone
     }
 
+    constructor(hikeId: Int, name: String, phone: String) {
+        this.hikeId = hikeId
+        this.name = name
+        this.phone = phone
+    }
+
+    constructor(name: String, phone: String) {
+        this.name = name
+        this.phone = phone
+    }
+
     companion object CREATOR : Parcelable.Creator<Contact> {
         override fun createFromParcel(parcel: Parcel): Contact {
             return Contact(parcel)

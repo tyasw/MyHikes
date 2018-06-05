@@ -25,8 +25,6 @@ class SuppliesActivity : StepActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_supplies)
 
-        // Check DB to see if this is a preexisting hike, populate list if it is
-        // else have blank list of supplies
         val extras = intent.extras
 
         isNewHike = extras.getBoolean("isNewHike")
@@ -206,7 +204,7 @@ class SuppliesActivity : StepActivity() {
         setUpSuppliesList()
     }
 
-    fun setLayout() {
+    private fun setLayout() {
         if (verticalDimensionsSet) {
             val supplyRowParams = TableRow.LayoutParams(TableRow.LayoutParams.MATCH_PARENT, 0, 1f)
             newSupplyRow.layoutParams = supplyRowParams
@@ -228,6 +226,7 @@ class SuppliesActivity : StepActivity() {
         }
     }
 
+    // Elements are name and quantity
     override fun setLayoutMargins(vararg elements: TextView) {
         //super.setLayoutMargins(elements)
         setLayout()

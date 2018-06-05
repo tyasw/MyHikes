@@ -5,7 +5,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.example.tyasw.myhikes.ContactsActivity">
+    tools:context="com.example.tyasw.myhikes.ChooseContactsActivity">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -13,24 +13,10 @@
         android:orientation="vertical">
 
         <TableRow
-            android:id="@+id/chooseContactsRow"
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight="1"
-            android:gravity="center">
-
-            <Button
-                android:id="@+id/chooseContactsButton"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Choose Contacts" />
-        </TableRow>
-
-        <TableRow
             android:id="@+id/mainContentRow"
             android:layout_width="match_parent"
             android:layout_height="0dp"
-            android:layout_weight="14" >
+            android:layout_weight="14">
 
             <TableLayout
                 android:id="@+id/dbTable"
@@ -38,6 +24,7 @@
                 android:layout_height="match_parent">
 
             </TableLayout>
+
         </TableRow>
 
         <TableRow
@@ -45,18 +32,9 @@
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:layout_weight="1">
-            <Button
-                android:id="@+id/contactsPreviousButton"
-                style="@android:style/Widget.DeviceDefault.Button.Borderless"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:onClick="previousStep"
-                android:padding="8dp"
-                android:text="@string/previous_string" />
 
             <Button
-                android:id="@+id/contactsCancelButton"
+                android:id="@+id/chooseContactsCancelButton"
                 style="@android:style/Widget.DeviceDefault.Button.Borderless"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
@@ -65,14 +43,13 @@
                 android:text="@string/cancel_string" />
 
             <Button
-                android:id="@+id/contactsNextButton"
+                android:id="@+id/chooseContactsDoneButton"
                 style="@android:style/Widget.DeviceDefault.Button.Borderless"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:onClick="nextStep"
                 android:padding="8dp"
-                android:text="@string/next_string" />
+                android:text="Done" />
         </TableRow>
     </LinearLayout>
 

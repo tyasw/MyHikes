@@ -8,6 +8,7 @@
          location permissions for the 'MyLocation' functionality. 
     -->
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <uses-permission android:name="android.permission.READ_CONTACTS" />
 
     <application
         android:allowBackup="true"
@@ -54,6 +55,7 @@
         <activity
             android:name=".NotificationActivity"
             android:label="Send a Text to Your Contacts" />
+        <activity android:name=".ChooseContactsActivity"></activity>
     </application>
 
 </manifest>
