@@ -32,40 +32,18 @@ class ChooseContactsActivity : StepActivity() {
     }
 
     // Save list of checkboxes in list of contacts
-    override fun onSaveInstanceState(outState: Bundle?, outPersistentState: PersistableBundle?) {
+    override fun onSaveInstanceState(outState: Bundle) {
         contacts?.clear()
 
         for (i in entries.indices) {
-            val entry = entries[i].text.toString()
-            var name = ""
-            var phone = ""
-
-            // Split name on space, then create new string only containing contact name
-            val entryStringArray = entry.split(" ")
-
-
-            var i = 0
-            var word = entryStringArray[i]
-            while (!word.startsWith("(")) {
-                name = name + " " + word
-                i++
-                word = entryStringArray[i]
-            }
-
-            while (i < (entryStringArray.size + 1)) {
-                phone = phone + " " + word
-                i++
-                word = entryStringArray[i]
-            }
-
-            val contact = Contact(name, phone)
+            val contact = parseContactEntry(entries[i].text.toString())
             contacts?.add(contact)
         }
 
-        super.onSaveInstanceState(outState, outPersistentState)
+        super.onSaveInstanceState(outState)
     }
 
-    override fun onRestoreInstanceState(savedInstanceState: Bundle?) {
+    override fun onRestoreInstanceState(savedInstanceState: Bundle) {
         super.onRestoreInstanceState(savedInstanceState)
     }
 
@@ -83,6 +61,8 @@ class ChooseContactsActivity : StepActivity() {
     }
 
     // Populates the list of contacts
+    // Source: https://medium.com/@manuaravindpta/fetching-contacts-from-device-using-kotlin-6c6d3e76574f
+    // Accessed 6/5/18
     private fun loadContacts(): ArrayList<Contact>? {
         var contactsList: ArrayList<Contact>? = null
 
@@ -164,13 +144,42 @@ class ChooseContactsActivity : StepActivity() {
         }
     }
 
+    // Transform a string containing contact information into a Contact
+    private fun parseContactEntry(entry: String): Contact {
+        var name = ""
+        var phone = ""
+
+        // Split name on space, then create new string only containing contact name
+        val entryStringArray = entry.split(" ")
+
+        var i = 0
+        var word = entryStringArray[i]
+        while (!word.startsWith("(")) {
+            name = name + " " + word
+            i++
+            word = entryStringArray[i]
+        }
+
+        while (i < entryStringArray.size) {
+            word = entryStringArray[i]
+            phone = phone + " " + word
+            i++
+        }
+        Log.d("ABC", phone)
+
+        return Contact(name, phone)
+    }
+
     private fun done() {
-// Not necessary, just send back contacts
-//        contacts.clear()
-//
-//        for (i in contactsList) {
-//
-//        }
+        contacts?.clear()
+
+        // Get all selected checkboxes and add them to contacts list
+        for (i in entries.indices) {
+            if (entries[i].isChecked()) {
+                val contact = parseContactEntry(entries[i].text.toString())
+                contacts?.add(contact)
+            }
+        }
 
         finish()
     }

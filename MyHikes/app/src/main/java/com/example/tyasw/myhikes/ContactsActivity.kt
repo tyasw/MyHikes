@@ -16,6 +16,7 @@ class ContactsActivity : StepActivity() {
     private var isNewHike: Boolean = true
 
     private var names = ArrayList<TextView>()
+    private var phoneNumbers = ArrayList<TextView>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -47,6 +48,48 @@ class ContactsActivity : StepActivity() {
     }
 
     private fun setUpContactsList() {
+        dbTable.removeAllViews()
+
+        val columnTitles = TableRow(this)
+
+        val newContacts = contacts
+
+        if (newContacts == null || newContacts.isEmpty()) {
+            val noResults = TextView(this)
+            noResults.text = "No entries"
+            noResults.layoutParams = setTableLayout(10, 10, 10, 10)
+            noResults.textSize = 18f
+
+            columnTitles.addView(noResults)
+            dbTable.addView(columnTitles)
+        }
+
+        if (newContacts != null) {
+            for (i in newContacts.indices) {
+                val row = TableRow(this)
+                val name = TextView(this)
+                val phone = TextView(this)
+
+                name.text = newContacts[i].name.toString()
+                phone.text = newContacts[i].phone.toString()
+
+                setLayoutMargins(name, phone)
+
+                name.textSize = 18f
+                phone.textSize = 18f
+
+                name.id = names.lastIndex
+                phone.id = phoneNumbers.lastIndex
+
+                names.add(name)
+                phoneNumbers.add(phone)
+
+                row.addView(name)
+                row.addView(phone)
+                dbTable.addView(row)
+            }
+            newContacts.clear()
+        }
     }
 
     private fun chooseContacts() {
@@ -58,6 +101,7 @@ class ContactsActivity : StepActivity() {
         if ((requestCode == CHOOSE_CONTACTS_CODE) && (resultCode == RESULT_OK)) {
             if (data.hasExtra("returnedContacts")) {
                 contacts = data.extras.getParcelableArrayList("returnedContacts")
+                setUpContactsList()
             }
         }
     }
@@ -104,13 +148,13 @@ class ContactsActivity : StepActivity() {
     private fun previousStep() {
         contacts?.clear()
 
-//        for (i in 0..names.size) {
-//            val name = names.get(i).text.toString()
-//            val quantity = quantities.get(i).text.toString().toDouble()
-//
-//            val supply = Supply(name, quantity)
-//            supplies?.add(supply)
-//        }
+        for (i in names.indices) {
+            val name = names[i].text.toString()
+            val phone = phoneNumbers[i].text.toString()
+
+            val contact = Contact(name, phone)
+            contacts?.add(contact)
+        }
 
         val i = Intent(this, MapsActivity::class.java)
 
@@ -130,13 +174,13 @@ class ContactsActivity : StepActivity() {
     private fun nextStep() {
         contacts?.clear()
 
-//        for (i in 0..names.size) {
-//            val name = names.get(i).text.toString()
-//            val quantity = quantities.get(i).text.toString().toDouble()
-//
-//            val supply = Supply(name, quantity)
-//            supplies?.add(supply)
-//        }
+        for (i in names.indices) {
+            val name = names[i].text.toString()
+            val phone = phoneNumbers[i].text.toString()
+
+            val contact = Contact(name, phone)
+            contacts?.add(contact)
+        }
 
         val i = Intent(this, NotificationActivity::class.java)
 
