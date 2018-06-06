@@ -240,7 +240,7 @@ class SuppliesActivity : StepActivity() {
         }
     }
 
-    private fun previousStep() {
+    override fun previousStep() {
         supplies?.clear()
 
         for (i in names.indices) {
@@ -271,7 +271,7 @@ class SuppliesActivity : StepActivity() {
         startActivity(i)
     }
 
-    private fun nextStep() {
+    override fun nextStep() {
         supplies?.clear()
 
         for (i in names.indices) {

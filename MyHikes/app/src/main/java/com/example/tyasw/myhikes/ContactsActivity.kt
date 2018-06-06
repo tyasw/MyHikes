@@ -235,7 +235,7 @@ class ContactsActivity : StepActivity() {
         }
     }
 
-    private fun previousStep() {
+    override fun previousStep() {
 //        contacts?.clear()
 //
 //        for (i in names.indices) {
@@ -261,7 +261,7 @@ class ContactsActivity : StepActivity() {
         startActivity(i)
     }
 
-    private fun nextStep() {
+    override fun nextStep() {
 //        contacts?.clear()
 //
 //        for (i in names.indices) {

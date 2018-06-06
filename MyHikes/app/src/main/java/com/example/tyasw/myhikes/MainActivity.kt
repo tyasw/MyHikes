@@ -31,33 +31,31 @@ class MainActivity : StepActivity() {
             nextStep()
         }
 
-//        val dbHandler = MyDBHandler(this, null, null, 1)
-//        dbHandler.deleteAllHikes(SAMPLE_USER_ID)
-//
-//        dbHandler.deleteEveryContact()
-//        dbHandler.deleteEverySupply()
+        //deleteEverythingFromDatabase()
 
         populateHikesList()
 
         setButtonRowParameters(buttonRow)
     }
 
+    private fun deleteEverythingFromDatabase() {
+        val dbHandler = MyDBHandler(this, null, null, 1)
+        dbHandler.deleteAllHikes(SAMPLE_USER_ID)
+        dbHandler.deleteEveryContact()
+        dbHandler.deleteEverySupply()
+    }
+
     private fun populateHikesList() {
         hikesList.clear()
         hikesTable.removeAllViews()
 
-        val dbHandler = MyDBHandler(this, null, null, 1)
-        hikesList = dbHandler.findAllHikes(SAMPLE_USER_ID)
+        val hikes = ArrayList<Hike>()
 
-        //val hikesList = ArrayList<Hike>()
         val hike1 = Hike(SAMPLE_USER_ID, "Skyline Divide", 10.0, "Hard", 0.0, 0.0)
         val hike2 = Hike(SAMPLE_USER_ID, "Ptarmigan Ridge", 11.5, "Medium", 0.0, 0.0)
         val hike3 = Hike(SAMPLE_USER_ID, "Chain Lakes", 6.3, "Medium", 0.0, 0.0)
         val hike4 = Hike(SAMPLE_USER_ID, "Excelsior Ridge", 8.0, "Hard", 0.0, 0.0)
         val hike5 = Hike(SAMPLE_USER_ID, "Church Mountain", 8.5, "Hard", 0.0, 0.0)
-
-
-        val hikes = ArrayList<Hike>()
 
         hikes.add(hike1)
         hikes.add(hike2)
@@ -65,7 +63,10 @@ class MainActivity : StepActivity() {
         hikes.add(hike4)
         hikes.add(hike5)
 
-        for (hike in hikesList) {
+        val dbHandler = MyDBHandler(this, null, null, 1)
+        val oldHikes = dbHandler.findAllHikes(SAMPLE_USER_ID)
+
+        for (hike in oldHikes) {
             hikes.add(hike)
         }
 
@@ -99,17 +100,17 @@ class MainActivity : StepActivity() {
         hikesTable.addView(radioHikesList)
     }
 
-    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
-        menuInflater.inflate(R.menu.menu_main, menu)
-        return true
-    }
+//    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+//        menuInflater.inflate(R.menu.menu_main, menu)
+//        return true
+//    }
 
-    override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        return when (item.itemId) {
-            5 -> true
-            else -> super.onOptionsItemSelected(item)
-        }
-    }
+//    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+//        return when (item.itemId) {
+//            5 -> true
+//            else -> super.onOptionsItemSelected(item)
+//        }
+//    }
 
     private fun getSelectedItem(radioGroup: RadioGroup, i: Int) {
         val selectedId = radioGroup.checkedRadioButtonId
@@ -131,7 +132,7 @@ class MainActivity : StepActivity() {
     }
 
     // Load from DB
-    private fun nextStep() {
+    override fun nextStep() {
         val dbHandler = MyDBHandler(this, null, null, 1)
 
         if (oldHikeName != "") {

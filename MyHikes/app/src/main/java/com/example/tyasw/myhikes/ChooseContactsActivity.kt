@@ -135,7 +135,8 @@ class ChooseContactsActivity : StepActivity() {
         when (requestCode) {
             PERMISSIONS_REQUEST_READ_CONTACTS -> {
                 if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                    loadContacts()
+                    contacts = loadContacts()
+                    populateListOfCheckBoxes(contacts)
                 } else {
                     Toast.makeText(this, "Unable to retrieve contacts - permission required",
                             Toast.LENGTH_LONG).show()

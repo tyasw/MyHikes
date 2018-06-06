@@ -45,7 +45,7 @@ class BasicInfoActivity : StepActivity() {
         }
     }
 
-    private fun previousStep() {
+    override fun previousStep() {
         // Save all information user entered
         receivedHike?.let {
             it.name = hikeName.text.toString()
@@ -68,7 +68,7 @@ class BasicInfoActivity : StepActivity() {
         startActivity(i)
     }
 
-    private fun nextStep() {
+    override fun nextStep() {
         // Save all information user entered
         receivedHike?.let {
             it.name = hikeName.text.toString()

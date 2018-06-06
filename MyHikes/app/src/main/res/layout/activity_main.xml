@@ -25,6 +25,8 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:layout_alignTop="@id/toolbar"
+        android:layout_alignBottom="@id/toolbar"
         android:orientation="vertical">
 
         <TableRow
@@ -46,35 +48,30 @@
             android:layout_height="0dp"
             android:layout_weight="1">
 
-            <RelativeLayout
-                android:layout_width="match_parent"
-                android:layout_height="match_parent">
+            <Button
+                android:id="@+id/mainAddButton"
+                style="@android:style/Widget.DeviceDefault.Button.Borderless"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_alignParentLeft="true"
+                android:layout_marginRight="0dp"
+                android:layout_weight="1"
+                android:onClick="addNew"
+                android:padding="8dp"
+                android:text="Add New" />
 
-                <Button
-                    android:id="@+id/mainAddButton"
-                    style="@android:style/Widget.DeviceDefault.Button.Borderless"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_alignParentLeft="true"
-                    android:layout_marginRight="0dp"
-                    android:onClick="addNew"
-                    android:padding="8dp"
-                    android:text="Add New" />
-
-                <Button
-                    android:id="@+id/mainNextButton"
-                    style="@android:style/Widget.DeviceDefault.Button.Borderless"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_alignParentRight="true"
-                    android:layout_marginLeft="0dp"
-                    android:onClick="nextStep"
-                    android:padding="8dp"
-                    android:text="Next" />
-
-            </RelativeLayout>
+            <Button
+                android:id="@+id/mainNextButton"
+                style="@android:style/Widget.DeviceDefault.Button.Borderless"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_alignParentRight="true"
+                android:layout_marginLeft="0dp"
+                android:layout_weight="1"
+                android:onClick="nextStep"
+                android:padding="8dp"
+                android:text="Next" />
 
         </TableRow>
     </LinearLayout>
 </android.support.design.widget.CoordinatorLayout>
-

@@ -7,14 +7,19 @@ import android.content.Intent
 import android.content.pm.PackageManager
 import android.content.res.Configuration
 import android.support.v4.app.ActivityCompat
+import android.util.Log
 import android.widget.Toast
 
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.SupportMapFragment
+import com.google.android.gms.maps.model.LatLng
+import com.google.android.gms.maps.model.Marker
+import com.google.android.gms.maps.model.MarkerOptions
 import kotlinx.android.synthetic.main.activity_maps.*
 
-class MapsActivity : StepActivity(), OnMapReadyCallback {
+class MapsActivity : StepActivity(), OnMapReadyCallback,
+        GoogleMap.OnMapClickListener, GoogleMap.OnMarkerClickListener {
     private var receivedHike: Hike? = null
     private var supplies: ArrayList<Supply>? = null
     private var contacts: ArrayList<Contact>? = null
@@ -35,7 +40,7 @@ class MapsActivity : StepActivity(), OnMapReadyCallback {
         supplies = intent.getParcelableArrayListExtra<Supply>("supplies") ?: null
         contacts = intent.getParcelableArrayListExtra<Contact>("contacts") ?: null
 
-        populateInfo(receivedHike)
+        //populateMap()
 
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
         val mapFragment = supportFragmentManager
@@ -54,9 +59,26 @@ class MapsActivity : StepActivity(), OnMapReadyCallback {
         setButtonRowParameters(buttonRow)
     }
 
-    private fun populateInfo(hike: Hike?) {
-        if (hike != null) {
+    override fun onResume() {
+        super.onResume()
+        try {
+            populateMap()
+        } catch (e : UninitializedPropertyAccessException) {
+            Log.d("ABC", "Map uninitialized")
+        }
+    }
 
+    private fun populateMap() {
+        try {
+            mMap.clear()
+
+            val position = LatLng(receivedHike?.latitude as Double, receivedHike?.longitude as Double)
+
+            mMap.addMarker(MarkerOptions()
+                    .position(position)
+                    .title(receivedHike?.latitude.toString() + ", " + receivedHike?.longitude.toString()))
+        } catch (e: UninitializedPropertyAccessException) {
+            Log.d("ABC", "Map uninitialized")
         }
     }
 
@@ -82,8 +104,34 @@ class MapsActivity : StepActivity(), OnMapReadyCallback {
                     LOCATION_REQUEST_CODE)
         }
 
+        mMap.setOnMapClickListener {
+            p -> onMapClick(p)
+        }
+
         val mapSettings = mMap.uiSettings
         mapSettings?.isZoomControlsEnabled = true
+        mMap.setOnMarkerClickListener(this)
+        populateMap()
+    }
+
+    override fun onMapClick(location: LatLng) {
+        try {
+            mMap.clear()
+            mMap.addMarker(MarkerOptions()
+                    .position(location)
+                    .title(location.latitude.toString() + ", " + location.longitude.toString()))
+
+            receivedHike?.latitude = location.latitude
+            receivedHike?.longitude = location.longitude
+
+            populateMap()
+        } catch (e: UninitializedPropertyAccessException) {
+            Log.d("ABC", "Map uninitialized")
+        }
+    }
+
+    override fun onMarkerClick(marker: Marker?): Boolean {
+        return false
     }
 
     // This method was created by Jianna Zhang.
@@ -110,7 +158,7 @@ class MapsActivity : StepActivity(), OnMapReadyCallback {
         }
     }
 
-    private fun previousStep() {
+    override fun previousStep() {
         val i = Intent(this, SuppliesActivity::class.java)
 
         if (isNewHike) {
@@ -126,7 +174,7 @@ class MapsActivity : StepActivity(), OnMapReadyCallback {
         startActivity(i)
     }
 
-    private fun nextStep() {
+    override fun nextStep() {
         val i = Intent(this, ContactsActivity::class.java)
 
         if (isNewHike) {

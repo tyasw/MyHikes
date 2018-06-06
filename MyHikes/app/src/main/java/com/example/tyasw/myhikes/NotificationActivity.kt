@@ -43,7 +43,7 @@ class NotificationActivity : StepActivity() {
         }
     }
 
-    private fun previousStep() {
+    override fun previousStep() {
         val i = Intent(this, ContactsActivity::class.java)
 
         if (isNewHike) {

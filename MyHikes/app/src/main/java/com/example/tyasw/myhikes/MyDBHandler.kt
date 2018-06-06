@@ -36,6 +36,8 @@ class MyDBHandler(context: Context, name: String?,
         values.put(HIKES_NAME, hike.name)
         values.put(HIKES_LENGTH, hike.length)
         values.put(HIKES_DIFFICULTY, hike.difficulty)
+        values.put(HIKES_LATITUDE, hike.latitude)
+        values.put(HIKES_LONGITUDE, hike.longitude)
 
         val db = this.writableDatabase
         db.insert(TABLE_HIKES, null, values)
