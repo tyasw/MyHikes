@@ -4,7 +4,6 @@ import android.content.Intent
 import android.content.res.Configuration
 import android.content.res.Resources
 import android.os.Bundle
-import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import android.widget.*
@@ -32,16 +31,15 @@ class MainActivity : StepActivity() {
             nextStep()
         }
 
-        //val dbHandler = MyDBHandler(this, null, null, 1)
-        //dbHandler.deleteAllHikes(SAMPLE_USER_ID)
+//        val dbHandler = MyDBHandler(this, null, null, 1)
+//        dbHandler.deleteAllHikes(SAMPLE_USER_ID)
+//
+//        dbHandler.deleteEveryContact()
+//        dbHandler.deleteEverySupply()
+
         populateHikesList()
 
         setButtonRowParameters(buttonRow)
-    }
-
-    override fun onConfigurationChanged(newConfig: Configuration) {
-        super.onConfigurationChanged(newConfig)
-        Toast.makeText(this, "Configuration changed", Toast.LENGTH_LONG).show()
     }
 
     private fun populateHikesList() {
@@ -89,7 +87,6 @@ class MainActivity : StepActivity() {
         for (hike in hikes) {
             //val row = TableRow(this)
             val radioButton = RadioButton(this)
-            Log.d("ABC", hike.id.toString())
             radioButton.id = hike.id
             radioButton.text = hike.name
             radioButton.textSize = 18f

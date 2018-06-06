@@ -125,7 +125,7 @@ class SuppliesActivity : StepActivity() {
         } else {
             val noResults = TextView(this)
             noResults.text = "No entries"
-            noResults.layoutParams = setTableLayout(10, 0, 10, 0)
+            noResults.layoutParams = setTableLayout(10, 10, 10, 10)
             noResults.textSize = 18f
 
             columnTitles.addView(noResults)
@@ -300,10 +300,5 @@ class SuppliesActivity : StepActivity() {
         i.putExtra("contacts", contacts)
 
         startActivity(i)
-    }
-
-    override fun onConfigurationChanged(newConfig: Configuration) {
-        super.onConfigurationChanged(newConfig)
-        Toast.makeText(this, "Configuration changed", Toast.LENGTH_LONG).show()
     }
 }

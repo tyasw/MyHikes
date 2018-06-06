@@ -215,8 +215,22 @@ class MyDBHandler(context: Context, name: String?,
         val cursor = db.rawQuery(query, null)
 
         while (cursor.moveToNext()) {
-            val id = Integer.parseInt(cursor.getString(0))
+            val id = Integer.parseInt(cursor.getString(1))
             db.delete(TABLE_SUPPLIES, HIKE_ID + " = ?", arrayOf(id.toString()))
+        }
+        cursor.close()
+        db.close()
+    }
+
+    fun deleteEverySupply() {
+        val query = "SELECT * FROM $TABLE_SUPPLIES"
+
+        val db = this.writableDatabase
+        val cursor = db.rawQuery(query, null)
+
+        while (cursor.moveToNext()) {
+            val id = Integer.parseInt(cursor.getString(0))
+            db.delete(TABLE_SUPPLIES, SUPPLY_ID + " = ?", arrayOf(id.toString()))
         }
         cursor.close()
         db.close()
@@ -265,7 +279,6 @@ class MyDBHandler(context: Context, name: String?,
     /* Visit this website: http://www.sqlitetutorial.net/sqlite-primary-key/ */
     fun addContact(contact: Contact) {
         val values = ContentValues()
-        values.put(CONTACT_ID, contact.id)
         values.put(CONTACT_HIKE_ID, contact.hikeId)
         values.put(CONTACT_NAME, contact.name)
         values.put(CONTACT_PHONE, contact.phone)
@@ -303,8 +316,22 @@ class MyDBHandler(context: Context, name: String?,
         val cursor = db.rawQuery(query, null)
 
         while (cursor.moveToNext()) {
-            val id = Integer.parseInt(cursor.getString(0))
+            val id = Integer.parseInt(cursor.getString(1))
             db.delete(TABLE_CONTACTS, CONTACT_HIKE_ID + " = ?", arrayOf(id.toString()))
+        }
+        cursor.close()
+        db.close()
+    }
+
+    fun deleteEveryContact() {
+        val query = "SELECT * FROM $TABLE_CONTACTS"
+
+        val db = this.writableDatabase
+        val cursor = db.rawQuery(query, null)
+
+        while (cursor.moveToNext()) {
+            val id = Integer.parseInt(cursor.getString(0))
+            db.delete(TABLE_CONTACTS, CONTACT_ID + " = ?", arrayOf(id.toString()))
         }
         cursor.close()
         db.close()

@@ -43,11 +43,6 @@ class NotificationActivity : StepActivity() {
         }
     }
 
-    override fun onConfigurationChanged(newConfig: Configuration) {
-        super.onConfigurationChanged(newConfig)
-        Toast.makeText(this, "Configuration changed", Toast.LENGTH_LONG).show()
-    }
-
     private fun previousStep() {
         val i = Intent(this, ContactsActivity::class.java)
 

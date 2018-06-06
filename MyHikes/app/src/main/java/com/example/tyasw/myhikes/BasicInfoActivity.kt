@@ -37,11 +37,6 @@ class BasicInfoActivity : StepActivity() {
         setButtonRowParameters(buttonRow)
     }
 
-    override fun onConfigurationChanged(newConfig: Configuration) {
-        super.onConfigurationChanged(newConfig)
-        Toast.makeText(this, "Configuration changed", Toast.LENGTH_LONG).show()
-    }
-
     fun populateInfo(hike: Hike?) {
         if (hike != null) {
             hikeName.setText(hike.name.toString())

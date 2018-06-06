@@ -4,6 +4,7 @@ import android.app.Activity
 import android.content.Intent
 import android.content.res.Configuration
 import android.os.Bundle
+import android.util.Log
 import android.widget.TableRow
 import android.widget.TextView
 import android.widget.Toast
@@ -11,8 +12,8 @@ import kotlinx.android.synthetic.main.activity_contacts.*
 
 class ContactsActivity : StepActivity() {
     private var receivedHike: Hike? = null
-    private var supplies: ArrayList<Supply>? = null
     private var contacts: ArrayList<Contact>? = null
+    private var supplies: ArrayList<Supply>? = null
     private var isNewHike: Boolean = true
 
     private var names = ArrayList<TextView>()
@@ -47,14 +48,83 @@ class ContactsActivity : StepActivity() {
         setButtonRowParameters(buttonRow)
     }
 
+    override fun onSaveInstanceState(savedInstanceState: Bundle) {
+//        contacts?.clear()
+//
+//        for (i in names.indices) {
+//            val name = names[i].text.toString()
+//            val phoneNumber = phoneNumbers[i].text.toString()
+//
+//            var contact: Contact? = null
+//            if (isNewHike) {
+//                contact = Contact(name, phoneNumber)
+//            } else {
+//                contact = Contact(receivedHike!!.id, name, phoneNumber)
+//            }
+//            contacts?.add(contact)
+//        }
+
+        super.onSaveInstanceState(savedInstanceState)
+
+        if (isNewHike) {
+            savedInstanceState.putBoolean("isNewHike", true)
+        } else {
+            savedInstanceState.putBoolean("isNewHike", false)
+        }
+
+        savedInstanceState.putParcelable("hike", receivedHike)
+        savedInstanceState.putParcelableArrayList("supplies", supplies)
+        savedInstanceState.putParcelableArrayList("contacts", contacts)
+    }
+
+    override fun onRestoreInstanceState(savedInstanceState: Bundle) {
+        super.onRestoreInstanceState(savedInstanceState)
+
+        isNewHike = savedInstanceState.getBoolean("isNewHike")
+        receivedHike = savedInstanceState.getParcelable("hike")
+        supplies = savedInstanceState.getParcelableArrayList("supplies")
+        contacts = savedInstanceState.getParcelableArrayList("contacts")
+        setUpContactsList()
+    }
+
+    // Want to create from a list of contacts, not a list of names and phone numbers
     private fun setUpContactsList() {
         dbTable.removeAllViews()
+        names.clear()
+        phoneNumbers.clear()
 
         val columnTitles = TableRow(this)
 
         val newContacts = contacts
 
-        if (newContacts == null || newContacts.isEmpty()) {
+        if ((newContacts != null && !newContacts.isEmpty()) || !names.isEmpty()) {
+            val nameColumn = TextView(this)
+            val phoneColumn = TextView(this)
+
+            nameColumn.text = "Name"
+            phoneColumn.text = "Phone"
+
+            val config = resources.configuration
+            val screenWidth = config.screenWidthDp
+
+            val colWidth = (pxToDP(screenWidth) / 2.5).toInt()
+
+            nameColumn.width = colWidth
+            nameColumn.maxWidth = colWidth
+            phoneColumn.width = colWidth
+            phoneColumn.maxWidth = colWidth
+
+            nameColumn.layoutParams = setTableLayout(10, 10, 10, 0)
+            phoneColumn.layoutParams = setTableLayout(10, 10, 10, 0)
+
+            nameColumn.textSize = 18f
+            phoneColumn.textSize = 18f
+
+            columnTitles.addView(nameColumn)
+            columnTitles.addView(phoneColumn)
+
+            dbTable.addView(columnTitles)
+        } else {
             val noResults = TextView(this)
             noResults.text = "No entries"
             noResults.layoutParams = setTableLayout(10, 10, 10, 10)
@@ -63,6 +133,28 @@ class ContactsActivity : StepActivity() {
             columnTitles.addView(noResults)
             dbTable.addView(columnTitles)
         }
+
+//        for (i in names.indices) {
+//            val row = TableRow(this)
+//            val name = TextView(this)
+//            val phone = TextView(this)
+//
+//            name.text = names[i].text
+//            phone.text = phoneNumbers[i].text
+//
+//            setLayoutMargins(name, phone)
+//
+//            name.textSize = 18f
+//            phone.textSize = 18f
+//
+//            name.id = names.lastIndex
+//            phone.id = phoneNumbers.lastIndex
+//
+//            row.addView(name)
+//            row.addView(phone)
+//
+//            dbTable.addView(row)
+//        }
 
         if (newContacts != null) {
             for (i in newContacts.indices) {
@@ -86,9 +178,10 @@ class ContactsActivity : StepActivity() {
 
                 row.addView(name)
                 row.addView(phone)
+
                 dbTable.addView(row)
             }
-            newContacts.clear()
+            //newContacts.clear()
         }
     }
 
@@ -128,33 +221,30 @@ class ContactsActivity : StepActivity() {
         }
     }
 
-    // Elements are name
+    // Elements are name, phone
     override fun setLayoutMargins(vararg elements: TextView) {
         //super.setLayoutMargins(*elements)
         setLayout()
 
         if (verticalDimensionsSet) {
             elements[0].layoutParams = setTableLayout(10, 10, 10, 10)
+            elements[1].layoutParams = setTableLayout(10, 10, 10, 10)
         } else {
             elements[0].layoutParams = setTableLayout(10, 10, 10, 10)
+            elements[1].layoutParams = setTableLayout(10, 10, 10, 10)
         }
-    }
-
-    override fun onConfigurationChanged(newConfig: Configuration) {
-        super.onConfigurationChanged(newConfig)
-        Toast.makeText(this, "Configuration changed", Toast.LENGTH_LONG).show()
     }
 
     private fun previousStep() {
-        contacts?.clear()
-
-        for (i in names.indices) {
-            val name = names[i].text.toString()
-            val phone = phoneNumbers[i].text.toString()
-
-            val contact = Contact(name, phone)
-            contacts?.add(contact)
-        }
+//        contacts?.clear()
+//
+//        for (i in names.indices) {
+//            val name = names[i].text.toString()
+//            val phone = phoneNumbers[i].text.toString()
+//
+//            val contact = Contact(name, phone)
+//            contacts?.add(contact)
+//        }
 
         val i = Intent(this, MapsActivity::class.java)
 
@@ -172,15 +262,15 @@ class ContactsActivity : StepActivity() {
     }
 
     private fun nextStep() {
-        contacts?.clear()
-
-        for (i in names.indices) {
-            val name = names[i].text.toString()
-            val phone = phoneNumbers[i].text.toString()
-
-            val contact = Contact(name, phone)
-            contacts?.add(contact)
-        }
+//        contacts?.clear()
+//
+//        for (i in names.indices) {
+//            val name = names[i].text.toString()
+//            val phone = phoneNumbers[i].text.toString()
+//
+//            val contact = Contact(name, phone)
+//            contacts?.add(contact)
+//        }
 
         val i = Intent(this, NotificationActivity::class.java)
 
