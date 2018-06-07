@@ -13,12 +13,17 @@ import kotlinx.android.synthetic.main.activity_main.*
 
 class MainActivity : StepActivity() {
     var hikesList: ArrayList<Hike> = ArrayList<Hike>()
-    val SAMPLE_USER_ID = 1
+    var accountId = -1
     var oldHikeName = ""
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+
+        val extras = intent.extras
+
+        accountId = extras.getInt("accountId")
+
         setSupportActionBar(toolbar)
         val actionBar = supportActionBar
 
@@ -40,7 +45,7 @@ class MainActivity : StepActivity() {
 
     private fun deleteEverythingFromDatabase() {
         val dbHandler = MyDBHandler(this, null, null, 1)
-        dbHandler.deleteAllHikes(SAMPLE_USER_ID)
+        dbHandler.deleteAllHikes(accountId)
         dbHandler.deleteEveryContact()
         dbHandler.deleteEverySupply()
     }
@@ -51,11 +56,11 @@ class MainActivity : StepActivity() {
 
         val hikes = ArrayList<Hike>()
 
-        val hike1 = Hike(SAMPLE_USER_ID, "Skyline Divide", 10.0, "Hard", 0.0, 0.0)
-        val hike2 = Hike(SAMPLE_USER_ID, "Ptarmigan Ridge", 11.5, "Medium", 0.0, 0.0)
-        val hike3 = Hike(SAMPLE_USER_ID, "Chain Lakes", 6.3, "Medium", 0.0, 0.0)
-        val hike4 = Hike(SAMPLE_USER_ID, "Excelsior Ridge", 8.0, "Hard", 0.0, 0.0)
-        val hike5 = Hike(SAMPLE_USER_ID, "Church Mountain", 8.5, "Hard", 0.0, 0.0)
+        val hike1 = Hike(accountId, "Skyline Divide", 10.0, "Hard", 0.0, 0.0)
+        val hike2 = Hike(accountId, "Ptarmigan Ridge", 11.5, "Medium", 0.0, 0.0)
+        val hike3 = Hike(accountId, "Chain Lakes", 6.3, "Medium", 0.0, 0.0)
+        val hike4 = Hike(accountId, "Excelsior Ridge", 8.0, "Hard", 0.0, 0.0)
+        val hike5 = Hike(accountId, "Church Mountain", 8.5, "Hard", 0.0, 0.0)
 
         hikes.add(hike1)
         hikes.add(hike2)
@@ -64,7 +69,7 @@ class MainActivity : StepActivity() {
         hikes.add(hike5)
 
         val dbHandler = MyDBHandler(this, null, null, 1)
-        val oldHikes = dbHandler.findAllHikes(SAMPLE_USER_ID)
+        val oldHikes = dbHandler.findAllHikes(accountId)
 
         for (hike in oldHikes) {
             hikes.add(hike)
@@ -119,11 +124,12 @@ class MainActivity : StepActivity() {
     }
 
     private fun addNew() {
-        val newHike = Hike(SAMPLE_USER_ID)
+        val newHike = Hike(accountId)
         val supplies = ArrayList<Supply>()
         val contacts = ArrayList<Contact>()
 
         val i = Intent(this, BasicInfoActivity::class.java)
+        i.putExtra("accountId", accountId)
         i.putExtra("isNewHike", true)
         i.putExtra("hike", newHike)
         i.putExtra("supplies", supplies)
@@ -137,11 +143,12 @@ class MainActivity : StepActivity() {
 
         if (oldHikeName != "") {
             // Get hike name from the radio button that is selected
-            val oldHike = dbHandler.findHike(SAMPLE_USER_ID, oldHikeName)
+            val oldHike = dbHandler.findHike(accountId, oldHikeName)
             val supplies = dbHandler.findAllSupplies(oldHike!!.id)
             val contacts = dbHandler.findAllContacts(oldHike!!.id)
 
             val i = Intent(this, BasicInfoActivity::class.java)
+            i.putExtra("accountId", accountId)
             i.putExtra("isNewHike", false)
             i.putExtra("hike", oldHike)
             i.putExtra("supplies", supplies)

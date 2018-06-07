@@ -395,6 +395,40 @@ class MyDBHandler(context: Context, name: String?,
         db.close()
     }
 
+    // Note: password is encrypted
+    fun findAccount(name: String, password: String): Int {
+        val query = "SELECT * FROM $TABLE_ACCOUNTS WHERE $PASSWORD = \"$password\""
+
+        val db = this.writableDatabase
+        val cursor = db.rawQuery(query, null)
+
+        var id = -1
+
+        if (cursor.moveToFirst()) {
+            id = Integer.parseInt(cursor.getString(0))
+        }
+
+        cursor.close()
+        db.close()
+
+        return id
+    }
+
+    fun doesAccountNameExist(name: String): Boolean {
+        var result = false
+
+        val query = "SELECT * FROM $TABLE_ACCOUNTS WHERE $USERNAME = \"$name\""
+
+        val db = this.writableDatabase
+        val cursor = db.rawQuery(query, null)
+
+        if (cursor.moveToFirst()) {
+            result = true
+        }
+
+        return result
+    }
+
     fun deleteAccount(id: Int): Boolean {
         var result = false
 

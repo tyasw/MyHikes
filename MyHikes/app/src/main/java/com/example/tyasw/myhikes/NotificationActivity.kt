@@ -7,6 +7,7 @@ import android.widget.Toast
 import kotlinx.android.synthetic.main.activity_notification.*
 
 class NotificationActivity : StepActivity() {
+    private var accountId = -1
     private var receivedHike: Hike? = null
     private var supplies: ArrayList<Supply>? = null
     private var contacts: ArrayList<Contact>? = null
@@ -18,6 +19,7 @@ class NotificationActivity : StepActivity() {
 
         val extras = intent.extras
 
+        accountId = extras.getInt("accountId")
         isNewHike = extras.getBoolean("isNewHike")
 
         receivedHike = intent.getParcelableExtra<Hike>("hike") ?: null
@@ -46,6 +48,8 @@ class NotificationActivity : StepActivity() {
     override fun previousStep() {
         val i = Intent(this, ContactsActivity::class.java)
 
+        i.putExtra("accountId", accountId)
+
         if (isNewHike) {
             i.putExtra("isNewHike", true)
         } else {
@@ -66,6 +70,8 @@ class NotificationActivity : StepActivity() {
 
         val i = Intent(this, MainActivity::class.java)
 
+        i.putExtra("accountId", accountId)
+
         if (isNewHike) {
             i.putExtra("isNewHike", true)
         } else {
@@ -84,7 +90,7 @@ class NotificationActivity : StepActivity() {
         if (isNewHike) {        // Add new entries
             dbHandler.addHike(receivedHike!!)
 
-            val hikeEntry = dbHandler.findHike(1, receivedHike!!.name)
+            val hikeEntry = dbHandler.findHike(accountId, receivedHike!!.name)
 
             val hikeId = hikeEntry?.id
 
@@ -99,7 +105,7 @@ class NotificationActivity : StepActivity() {
             }
         } else {    // update old entries and create new ones as necessary
             dbHandler.modifyHike(receivedHike!!)
-            val hikeEntry = dbHandler.findHike(1, receivedHike!!.name)
+            val hikeEntry = dbHandler.findHike(accountId, receivedHike!!.name)
 
             // Just delete old entries for now, much easier than updating
             val hikeId = hikeEntry?.id

@@ -7,6 +7,7 @@ import android.widget.Toast
 import kotlinx.android.synthetic.main.activity_basic_info.*
 
 class BasicInfoActivity : StepActivity() {
+    private var accountId = -1
     private var receivedHike: Hike? = null
     private var supplies: ArrayList<Supply>? = null
     private var contacts: ArrayList<Contact>? = null
@@ -18,6 +19,7 @@ class BasicInfoActivity : StepActivity() {
 
         val extras = intent.extras
 
+        accountId = extras.getInt("accountId")
         isNewHike = extras.getBoolean("isNewHike")
 
         receivedHike = intent.getParcelableExtra<Hike>("hike") ?: null
@@ -55,6 +57,8 @@ class BasicInfoActivity : StepActivity() {
 
         val i = Intent(this, MainActivity::class.java)
 
+        i.putExtra("accountId", accountId)
+
         if (isNewHike) {
             i.putExtra("isNewHike", true)
         } else {
@@ -77,6 +81,8 @@ class BasicInfoActivity : StepActivity() {
         }
 
         val i = Intent(this, SuppliesActivity::class.java)
+
+        i.putExtra("accountId", accountId)
 
         if (isNewHike) {
             i.putExtra("isNewHike", true)

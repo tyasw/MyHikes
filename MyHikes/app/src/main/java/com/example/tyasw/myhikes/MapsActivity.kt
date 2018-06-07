@@ -20,6 +20,8 @@ import kotlinx.android.synthetic.main.activity_maps.*
 
 class MapsActivity : StepActivity(), OnMapReadyCallback,
         GoogleMap.OnMapClickListener, GoogleMap.OnMarkerClickListener {
+
+    private var accountId = -1
     private var receivedHike: Hike? = null
     private var supplies: ArrayList<Supply>? = null
     private var contacts: ArrayList<Contact>? = null
@@ -34,6 +36,7 @@ class MapsActivity : StepActivity(), OnMapReadyCallback,
 
         val extras = intent.extras
 
+        accountId = extras.getInt("accountId")
         isNewHike = extras.getBoolean("isNewHike")
 
         receivedHike = intent.getParcelableExtra<Hike>("hike") ?: null
@@ -161,6 +164,8 @@ class MapsActivity : StepActivity(), OnMapReadyCallback,
     override fun previousStep() {
         val i = Intent(this, SuppliesActivity::class.java)
 
+        i.putExtra("accountId", accountId)
+
         if (isNewHike) {
             i.putExtra("isNewHike", true)
         } else {
@@ -176,6 +181,8 @@ class MapsActivity : StepActivity(), OnMapReadyCallback,
 
     override fun nextStep() {
         val i = Intent(this, ContactsActivity::class.java)
+
+        i.putExtra("accountId", accountId)
 
         if (isNewHike) {
             i.putExtra("isNewHike", true)

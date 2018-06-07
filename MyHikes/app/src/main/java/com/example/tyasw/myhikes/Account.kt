@@ -13,4 +13,9 @@ class Account {
         this.username = username
         this.encryptedPassword = encryptedPassword
     }
+
+    constructor(username: String, encryptedPassword: String) {
+        this.username = username
+        this.encryptedPassword = encryptedPassword
+    }
 }

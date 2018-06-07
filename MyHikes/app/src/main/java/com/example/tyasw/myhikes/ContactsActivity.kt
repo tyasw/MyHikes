@@ -11,6 +11,7 @@ import android.widget.Toast
 import kotlinx.android.synthetic.main.activity_contacts.*
 
 class ContactsActivity : StepActivity() {
+    private var accountId = -1
     private var receivedHike: Hike? = null
     private var contacts: ArrayList<Contact>? = null
     private var supplies: ArrayList<Supply>? = null
@@ -25,6 +26,7 @@ class ContactsActivity : StepActivity() {
 
         val extras = intent.extras
 
+        accountId = extras.getInt("accountId")
         isNewHike = extras.getBoolean("isNewHike")
 
         receivedHike = intent.getParcelableExtra<Hike>("hike") ?: null
@@ -273,6 +275,8 @@ class ContactsActivity : StepActivity() {
 //        }
 
         val i = Intent(this, NotificationActivity::class.java)
+
+        i.putExtra("accountId", accountId)
 
         if (isNewHike) {
             i.putExtra("isNewHike", true)
