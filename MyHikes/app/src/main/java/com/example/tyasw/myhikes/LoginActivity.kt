@@ -1,5 +1,7 @@
 package com.example.tyasw.myhikes
 
+import android.util.Base64
+
 import android.content.Intent
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
@@ -10,20 +12,39 @@ import android.widget.TextView
 import android.widget.Toast
 import com.example.tyasw.myhikes.R.layout
 import kotlinx.android.synthetic.main.activity_login.*
+import java.io.*
+import java.nio.Buffer
 import java.util.*
 import javax.crypto.Cipher.DECRYPT_MODE
 import javax.crypto.Cipher.ENCRYPT_MODE
+import javax.crypto.SecretKey
 import javax.crypto.spec.SecretKeySpec
 
 class LoginActivity : StepActivity() {
     private var aes: AdvEncryptionStand = AdvEncryptionStand()
+    private var MASTER_KEY: SecretKey? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_login)
 
-        //deleteEverythingFromDatabase()
+        // Query db for key
+        val dbHandler = MyDBHandler(this, null, null, 1)
+        val key = dbHandler.getKey()
+        if (key != null) {
+            val decodedKey: ByteArray = Base64.decode(key, Base64.DEFAULT)
+            MASTER_KEY = SecretKeySpec(decodedKey, 0, decodedKey.size, "AES")
+            Log.d("LoginActivity", "Key read and saved")
+        } else {
+            // No key exists, create one
+            aes = AdvEncryptionStand()
+            MASTER_KEY = aes.getKey()
+            val encodedKey: String = Base64.encodeToString(aes.getKey().encoded, Base64.DEFAULT)
+            dbHandler.addKey(encodedKey)
+            Log.d("LoginActivity", "Key added to db")
+        }
 
+        //deleteEverythingFromDatabase()
         aes = AdvEncryptionStand()
 
         createAccountButton.setOnClickListener {
@@ -46,7 +67,6 @@ class LoginActivity : StepActivity() {
     // Look up account in the database
     private fun login() {
         val encryptedPassword = encryptPassword(password.text.toString())
-        Log.d("LoginActivity", "encryptedPassword" + encryptedPassword!!)
 
         val dbHandler = MyDBHandler(this, null, null, 1)
         val id = dbHandler.findAccount(userName.text.toString(), encryptedPassword!!)
@@ -64,7 +84,6 @@ class LoginActivity : StepActivity() {
     // Create new entry in the database
     private fun createAccount() {
         val encryptedPassword = encryptPassword(password.text.toString())
-        Log.d("LoginActivity", "encryptedPassword" + encryptedPassword!!)
 
         val dbHandler = MyDBHandler(this, null, null, 1)
         val doesAccountAlreadyExist = dbHandler.doesAccountNameExist(userName.text.toString())
@@ -82,6 +101,6 @@ class LoginActivity : StepActivity() {
     }
 
     private fun encryptPassword(plaintext: String): String? {
-        return aes.crypt(ENCRYPT_MODE, plaintext, aes.getKey())
+        return aes.crypt(ENCRYPT_MODE, plaintext, MASTER_KEY!!)
     }
 }

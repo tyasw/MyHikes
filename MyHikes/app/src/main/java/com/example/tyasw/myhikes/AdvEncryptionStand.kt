@@ -17,8 +17,13 @@ AES is an example of Asy
  */
 // show this page: https://developer.android.com/reference/javax/crypto/Cipher
 
+import android.security.keystore.KeyGenParameterSpec
+import android.security.keystore.KeyProperties
 import java.security.GeneralSecurityException
+import java.security.KeyPairGenerator
+import java.security.KeyStore
 import java.security.SecureRandom
+import java.util.*
 import javax.crypto.Cipher
 import javax.crypto.KeyGenerator
 import javax.crypto.SecretKey
@@ -47,7 +52,6 @@ internal constructor() {
     */
 
     init {
-
         cipher = Cipher.getInstance(ALGORITHM)
         rand = SecureRandom()
         val keyGen = KeyGenerator.getInstance(ALGORITHM)
@@ -55,9 +59,37 @@ internal constructor() {
         secretKey = keyGen.generateKey()
     }
 
+//    fun getAllAliasesFromKeystore() {
+//        val ks: KeyStore = KeyStore.getInstance("AndroidKeyStore").apply {
+//            load(null)
+//        }
+//
+//        val aliases: Enumeration<String> = ks.aliases()
+//    }
+//
+//    fun getKeyFromKeystore() {
+//
+//    }
+//
+//    fun putKeyInKeystore() {
+//        val kpg: KeyPairGenerator = KeyPairGenerator.getInstance(
+//                KeyProperties.KEY_ALGORITHM_AES, "AndroidKeyStore")
+//
+//        val parameterSpec: KeyGenParameterSpec = KeyGenParameterSpec.Builder(
+//                alias,
+//                KeyProperties.PURPOSE_ENCRYPT or KeyProperties.PURPOSE_DECRYPT)
+//                .run {
+//                    setDigests(KeyProperties.DIGEST_SHA256, KeyProperties.DIGEST_SHA512)
+//                    build()
+//                }
+//        kpg.initialize(parameterSpec)
+//
+//        val kp = kpg.generateKeyPair()
+//    }
+
     fun crypt(opMode: Int, message: String, key: SecretKey): String? {
         return try {
-            cipher?.init(opMode, key, rand)
+            cipher?.init(opMode, key)
             val messageBytes = message.toByteArray(charset("ISO-8859-1"))
             val encodedBytes = cipher?.doFinal(messageBytes)
 

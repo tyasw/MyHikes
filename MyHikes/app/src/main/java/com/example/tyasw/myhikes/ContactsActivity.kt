@@ -68,6 +68,8 @@ class ContactsActivity : StepActivity() {
 
         super.onSaveInstanceState(savedInstanceState)
 
+        savedInstanceState.putInt("accountId", accountId)
+
         if (isNewHike) {
             savedInstanceState.putBoolean("isNewHike", true)
         } else {
@@ -82,6 +84,7 @@ class ContactsActivity : StepActivity() {
     override fun onRestoreInstanceState(savedInstanceState: Bundle) {
         super.onRestoreInstanceState(savedInstanceState)
 
+        accountId = savedInstanceState.getInt("accountId")
         isNewHike = savedInstanceState.getBoolean("isNewHike")
         receivedHike = savedInstanceState.getParcelable("hike")
         supplies = savedInstanceState.getParcelableArrayList("supplies")
@@ -249,6 +252,8 @@ class ContactsActivity : StepActivity() {
 //        }
 
         val i = Intent(this, MapsActivity::class.java)
+
+        i.putExtra("accountId", accountId)
 
         if (isNewHike) {
             i.putExtra("isNewHike", true)

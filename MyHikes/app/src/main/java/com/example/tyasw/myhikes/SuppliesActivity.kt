@@ -68,6 +68,8 @@ class SuppliesActivity : StepActivity() {
             supplies?.add(supply)
         }
 
+        savedInstanceState.putInt("accountId", accountId)
+
         if (isNewHike) {
             savedInstanceState.putBoolean("isNewHike", true)
         } else {
@@ -84,6 +86,7 @@ class SuppliesActivity : StepActivity() {
     override fun onRestoreInstanceState(savedInstanceState: Bundle) {
         super.onRestoreInstanceState(savedInstanceState)
 
+        accountId = savedInstanceState.getInt("accountId")
         isNewHike = savedInstanceState.getBoolean("isNewHike")
         receivedHike = savedInstanceState.getParcelable("hike")
         supplies = savedInstanceState.getParcelableArrayList("supplies")

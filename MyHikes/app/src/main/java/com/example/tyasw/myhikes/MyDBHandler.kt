@@ -18,6 +18,7 @@ class MyDBHandler(context: Context, name: String?,
         db.execSQL(CREATE_SUPPLIES_TABLE)
         db.execSQL(CREATE_CONTACTS_TABLE)
         db.execSQL(CREATE_ACCOUNTS_TABLE)
+        db.execSQL(CREATE_KEYS_TABLE)
     }
 
     override fun onUpgrade(db: SQLiteDatabase, oldVersion: Int, newVersion: Int) {
@@ -25,6 +26,7 @@ class MyDBHandler(context: Context, name: String?,
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_SUPPLIES)
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_CONTACTS)
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_ACCOUNTS)
+        db.execSQL("DROP TABLE IF EXISTS " + TABLE_KEYS)
 
         onCreate(db)
     }
@@ -382,11 +384,8 @@ class MyDBHandler(context: Context, name: String?,
 
 
     // ----------------------- ACCOUNTS table methods -----------------------//
-    // There are no methods currently to modify or view account information,
-    // for obvious security reasons
     fun addAccount(account: Account) {
         val values = ContentValues()
-        values.put(ACCOUNT_ID, account.id)
         values.put(USERNAME, account.username)
         values.put(PASSWORD, account.encryptedPassword)
 
@@ -397,7 +396,7 @@ class MyDBHandler(context: Context, name: String?,
 
     // Note: password is encrypted
     fun findAccount(name: String, password: String): Int {
-        val query = "SELECT * FROM $TABLE_ACCOUNTS WHERE $PASSWORD = \"$password\""
+        val query = "SELECT * FROM $TABLE_ACCOUNTS WHERE $PASSWORD = \'$password\'"
 
         val db = this.writableDatabase
         val cursor = db.rawQuery(query, null)
@@ -449,6 +448,47 @@ class MyDBHandler(context: Context, name: String?,
         return result
     }
 
+    // ------------------------ KEYS table methods ------------------------//
+    fun addKey(key: String) {
+        val values = ContentValues()
+        values.put(KEY, key)
+
+        val db = this.writableDatabase
+        db.insert(TABLE_KEYS, null, values)
+        db.close()
+    }
+
+    fun getKey(): String? {
+        var result: String? = null
+        val query = "SELECT * FROM $TABLE_KEYS"
+        val db = this.writableDatabase
+        val cursor = db.rawQuery(query, null)
+        if (cursor.moveToFirst()) {
+            result = cursor.getString(0)
+        }
+
+        cursor.close()
+        db.close()
+        return result
+    }
+
+    fun deleteKey() {
+        val query = "SELECT * FROM $TABLE_KEYS"
+
+        val db = this.writableDatabase
+
+        val cursor = db.rawQuery(query, null)
+
+        if (cursor.moveToFirst()) {
+            val key = cursor.getString(0)
+            db.delete(TABLE_ACCOUNTS, KEY + " = ?", arrayOf(key))
+            cursor.close()
+        }
+
+        db.close()
+    }
+
+
     companion object {
         private val DATABASE_VERSION = 1
         private val DATABASE_NAME = "hikesDB.db"
@@ -458,6 +498,7 @@ class MyDBHandler(context: Context, name: String?,
         val TABLE_SUPPLIES = "supplies"
         val TABLE_CONTACTS = "contacts"
         val TABLE_ACCOUNTS = "accounts"
+        val TABLE_KEYS = "keys"
 
         // HIKES table columns
         val HIKES_COLUMN_ID = "_id"
@@ -485,6 +526,9 @@ class MyDBHandler(context: Context, name: String?,
         val ACCOUNT_ID = "_id"
         val USERNAME = "username"
         val PASSWORD = "encryptedPassword"
+
+        // KEYS table columns
+        val KEY = "key"
 
         // Create statements
         val CREATE_HIKES_TABLE = ("CREATE TABLE " + TABLE_HIKES
@@ -519,6 +563,11 @@ class MyDBHandler(context: Context, name: String?,
                 + ACCOUNT_ID + " INTEGER PRIMARY KEY,"
                 + USERNAME + " TEXT,"
                 + PASSWORD + " TEXT"
+                + ")")
+
+        val CREATE_KEYS_TABLE = ("CREATE TABLE " + TABLE_KEYS
+                + "("
+                + KEY + " TEXT PRIMARY KEY"
                 + ")")
     }
 }

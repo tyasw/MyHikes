@@ -24,9 +24,6 @@ class MainActivity : StepActivity() {
 
         accountId = extras.getInt("accountId")
 
-        setSupportActionBar(toolbar)
-        val actionBar = supportActionBar
-
         // Set up button onclick handlers
         mainAddButton.setOnClickListener {
             addNew()
@@ -54,26 +51,8 @@ class MainActivity : StepActivity() {
         hikesList.clear()
         hikesTable.removeAllViews()
 
-        val hikes = ArrayList<Hike>()
-
-        val hike1 = Hike(accountId, "Skyline Divide", 10.0, "Hard", 0.0, 0.0)
-        val hike2 = Hike(accountId, "Ptarmigan Ridge", 11.5, "Medium", 0.0, 0.0)
-        val hike3 = Hike(accountId, "Chain Lakes", 6.3, "Medium", 0.0, 0.0)
-        val hike4 = Hike(accountId, "Excelsior Ridge", 8.0, "Hard", 0.0, 0.0)
-        val hike5 = Hike(accountId, "Church Mountain", 8.5, "Hard", 0.0, 0.0)
-
-        hikes.add(hike1)
-        hikes.add(hike2)
-        hikes.add(hike3)
-        hikes.add(hike4)
-        hikes.add(hike5)
-
         val dbHandler = MyDBHandler(this, null, null, 1)
-        val oldHikes = dbHandler.findAllHikes(accountId)
-
-        for (hike in oldHikes) {
-            hikes.add(hike)
-        }
+        val hikes = dbHandler.findAllHikes(accountId)
 
         if (hikes.isEmpty()) {
             val row = TableRow(this)

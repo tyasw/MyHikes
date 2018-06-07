@@ -12,10 +12,16 @@
         android:orientation="vertical">
 
         <TableRow
+            android:id="@+id/pictureRow"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="8" />
+
+        <TableRow
             android:id="@+id/mainContent"
             android:layout_width="match_parent"
             android:layout_height="0dp"
-            android:layout_weight="15" >
+            android:layout_weight="7">
 
             <TableLayout
                 android:layout_width="match_parent"
@@ -30,7 +36,7 @@
                         android:id="@+id/userNameLabel"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Name"
+                        android:text="Username"
                         android:textSize="18sp" />
 
                     <EditText
@@ -51,7 +57,7 @@
                         android:id="@+id/passwordLabel"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="@string/length_string"
+                        android:text="Password"
                         android:textSize="18sp" />
 
                     <EditText
@@ -59,7 +65,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:ems="10"
-                        android:inputType="numberDecimal" />
+                        android:inputType="textPersonName" />
 
                 </TableRow>
 
