@@ -55,7 +55,8 @@
         <activity
             android:name=".NotificationActivity"
             android:label="Send a Text to Your Contacts" />
-        <activity android:name=".ChooseContactsActivity"></activity>
+        <activity android:name=".ChooseContactsActivity" />
+        <activity android:name=".LoginActivity"></activity>
     </application>
 
 </manifest>
