@@ -3,6 +3,7 @@ package com.example.tyasw.myhikes
 import android.Manifest
 import android.app.PendingIntent
 import android.content.Intent
+import android.content.IntentFilter
 import android.content.pm.PackageManager
 import android.content.res.Configuration
 import android.os.Bundle
@@ -12,6 +13,9 @@ import android.telephony.SmsManager
 import android.widget.Toast
 import kotlinx.android.synthetic.main.activity_notification.*
 
+// Code sending sms messages came from https://android.jlelse.eu/detecting-sending-sms-on-android-8a154562597f,
+// https://www.ssaurel.com/blog/how-to-send-and-receive-sms-in-android/,
+// and http://xadkile.blogspot.com/2017/09/this-post-gives-examples-of-sending-sms.html
 class NotificationActivity : StepActivity() {
     private var accountId = -1
     private var receivedHike: Hike? = null
@@ -146,6 +150,11 @@ class NotificationActivity : StepActivity() {
     }
 
     private fun sendText(contact: Contact, messageString: String) {
+        val smsBroadcastReceiver = SMSBroadcastReceiver(this)
+        val sentIntentFilter = IntentFilter(SENT)
+        sentIntentFilter.addAction(DELIVERED)
+        registerReceiver(smsBroadcastReceiver, sentIntentFilter)
+
         val pendingIntentSent = PendingIntent.getBroadcast(applicationContext, 0, Intent(SENT), 0)
         val pendingIntentDelivered = PendingIntent.getBroadcast(applicationContext, 0, Intent(DELIVERED), 0)
 
@@ -158,8 +167,6 @@ class NotificationActivity : StepActivity() {
         } else {
             smsManager.sendTextMessage(contact.phone, null, messageString, pendingIntentSent, pendingIntentDelivered)
         }
-
-        Toast.makeText(this, "Text message sent.", Toast.LENGTH_LONG).show()
     }
 
     private fun send() {

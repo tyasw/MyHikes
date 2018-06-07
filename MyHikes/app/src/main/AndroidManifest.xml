@@ -32,20 +32,24 @@
             android:value="@string/google_maps_key" />
 
         <activity
-            android:name=".LoginActivity"
-            android:label="MyHikes"
-            android:theme="@style/AppTheme">
+            android:name=".SplashScreenActivity"
+            android:theme="@style/AppTheme"
+            android:label="MyHikes">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
+
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
-        </activity>
 
+        </activity>
 
         <activity
-            android:name=".MainActivity"
-            android:label="Choose a Hike">
+            android:name=".LoginActivity"
+            android:label="Login">
         </activity>
+        <activity
+            android:name=".MainActivity"
+            android:label="Choose a Hike"></activity>
         <activity
             android:name=".BasicInfoActivity"
             android:label="Enter Basic Info" />
@@ -62,7 +66,6 @@
             android:name=".NotificationActivity"
             android:label="Send a Text to Your Contacts" />
         <activity android:name=".ChooseContactsActivity" />
-
     </application>
 
 </manifest>
