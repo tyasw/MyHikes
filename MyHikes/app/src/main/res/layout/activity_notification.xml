@@ -22,7 +22,7 @@
                 android:id="@+id/textView2"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Enter Message"
+                android:text="@string/enter_message_string"
                 android:textSize="24sp" />
 
         </TableRow>
@@ -52,7 +52,7 @@
                 android:id="@+id/sendTextButton"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Send Text" />
+                android:text="@string/send_text_string" />
         </TableRow>
 
         <TableRow

@@ -12,4 +12,15 @@
     <string name="cancel_string">Cancel</string>
     <string name="next_string">Next</string>
     <string name="finish_string">Finish</string>
+    <string name="username_string">Username</string>
+    <string name="password_string">Password</string>
+    <string name="create_an_account_string">Create an Account</string>
+    <string name="login_string">Login</string>
+    <string name="name_string">Name</string>
+    <string name="quantity_string">Quantity</string>
+    <string name="add_string">Add</string>
+    <string name="choose_contacts_string">Choose Contacts</string>
+    <string name="done_string">Done</string>
+    <string name="enter_message_string">Enter Message</string>
+    <string name="send_text_string">Send Text</string>
 </resources>

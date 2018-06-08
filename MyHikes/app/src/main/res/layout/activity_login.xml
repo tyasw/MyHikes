@@ -53,7 +53,7 @@
                         android:id="@+id/userNameLabel"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Username"
+                        android:text="@string/username_string"
                         android:textSize="18sp" />
 
                     <EditText
@@ -74,7 +74,7 @@
                         android:id="@+id/passwordLabel"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Password"
+                        android:text="@string/password_string"
                         android:textSize="18sp" />
 
                     <EditText
@@ -103,7 +103,7 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:padding="8dp"
-                android:text="Create an Account" />
+                android:text="@string/create_an_account_string" />
 
             <Button
                 android:id="@+id/loginButton"
@@ -112,7 +112,7 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:padding="8dp"
-                android:text="Login" />
+                android:text="@string/login_string" />
 
         </TableRow>
     </LinearLayout>

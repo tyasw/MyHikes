@@ -20,7 +20,7 @@
                 android:id="@+id/chooseContactsButton"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Choose Contacts" />
+                android:text="@string/choose_contacts_string" />
         </TableRow>
 
         <TableRow
