@@ -1,28 +1,32 @@
 package com.example.tyasw.myhikes
 
-import android.app.Activity
 import android.content.Intent
-import android.content.res.Configuration
 import android.os.Bundle
-import android.util.Log
+import android.view.Menu
+import android.view.MenuItem
 import android.widget.TableRow
 import android.widget.TextView
-import android.widget.Toast
 import kotlinx.android.synthetic.main.activity_contacts.*
 
+/**
+ * Program: MyHikes
+ * Description: Organize hiking plans.
+ * Author: William Tyas
+ * Notes: Currently, the SMS feature has not been tested, so it is unknown
+ *      whether it works or not. A data plan is required to send SMS messages,
+ *      but the device this app was tested on did not have one.
+ * Last Modified: 6/8/18
+ */
 class ContactsActivity : StepActivity() {
-    private var accountId = -1
-    private var receivedHike: Hike? = null
-    private var contacts: ArrayList<Contact>? = null
-    private var supplies: ArrayList<Supply>? = null
-    private var isNewHike: Boolean = true
-
     private var names = ArrayList<TextView>()
     private var phoneNumbers = ArrayList<TextView>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_contacts)
+
+        val actionBar = supportActionBar
+        actionBar?.setLogo(R.mipmap.ic_launcher)
 
         val extras = intent.extras
 
@@ -43,6 +47,10 @@ class ContactsActivity : StepActivity() {
             previousStep()
         }
 
+        contactsCancelButton.setOnClickListener {
+            cancel(this)
+        }
+
         contactsNextButton.setOnClickListener {
             nextStep()
         }
@@ -51,21 +59,6 @@ class ContactsActivity : StepActivity() {
     }
 
     override fun onSaveInstanceState(savedInstanceState: Bundle) {
-//        contacts?.clear()
-//
-//        for (i in names.indices) {
-//            val name = names[i].text.toString()
-//            val phoneNumber = phoneNumbers[i].text.toString()
-//
-//            var contact: Contact? = null
-//            if (isNewHike) {
-//                contact = Contact(name, phoneNumber)
-//            } else {
-//                contact = Contact(receivedHike!!.id, name, phoneNumber)
-//            }
-//            contacts?.add(contact)
-//        }
-
         super.onSaveInstanceState(savedInstanceState)
 
         savedInstanceState.putInt("accountId", accountId)
@@ -139,28 +132,6 @@ class ContactsActivity : StepActivity() {
             dbTable.addView(columnTitles)
         }
 
-//        for (i in names.indices) {
-//            val row = TableRow(this)
-//            val name = TextView(this)
-//            val phone = TextView(this)
-//
-//            name.text = names[i].text
-//            phone.text = phoneNumbers[i].text
-//
-//            setLayoutMargins(name, phone)
-//
-//            name.textSize = 18f
-//            phone.textSize = 18f
-//
-//            name.id = names.lastIndex
-//            phone.id = phoneNumbers.lastIndex
-//
-//            row.addView(name)
-//            row.addView(phone)
-//
-//            dbTable.addView(row)
-//        }
-
         if (newContacts != null) {
             for (i in newContacts.indices) {
                 val row = TableRow(this)
@@ -186,7 +157,6 @@ class ContactsActivity : StepActivity() {
 
                 dbTable.addView(row)
             }
-            //newContacts.clear()
         }
     }
 
@@ -241,16 +211,6 @@ class ContactsActivity : StepActivity() {
     }
 
     override fun previousStep() {
-//        contacts?.clear()
-//
-//        for (i in names.indices) {
-//            val name = names[i].text.toString()
-//            val phone = phoneNumbers[i].text.toString()
-//
-//            val contact = Contact(name, phone)
-//            contacts?.add(contact)
-//        }
-
         val i = Intent(this, MapsActivity::class.java)
 
         i.putExtra("accountId", accountId)
@@ -269,16 +229,6 @@ class ContactsActivity : StepActivity() {
     }
 
     override fun nextStep() {
-//        contacts?.clear()
-//
-//        for (i in names.indices) {
-//            val name = names[i].text.toString()
-//            val phone = phoneNumbers[i].text.toString()
-//
-//            val contact = Contact(name, phone)
-//            contacts?.add(contact)
-//        }
-
         val i = Intent(this, NotificationActivity::class.java)
 
         i.putExtra("accountId", accountId)
@@ -294,6 +244,21 @@ class ContactsActivity : StepActivity() {
         i.putExtra("contacts", contacts)
 
         startActivity(i)
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+        menuInflater.inflate(R.menu.menu, menu)
+        return true
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        return when (item.itemId) {
+            R.id.menu_help -> {
+                displayHelpBox(this)
+                true
+            }
+            else -> super.onOptionsItemSelected(item)
+        }
     }
 
     companion object {

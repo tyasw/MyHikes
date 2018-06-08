@@ -1,9 +1,12 @@
 package com.example.tyasw.myhikes
 
+import android.content.Context
+import android.content.Intent
 import android.content.res.Configuration
 import android.content.res.Resources
 import android.os.Bundle
 import android.support.v4.view.GestureDetectorCompat
+import android.support.v7.app.AlertDialog
 import android.support.v7.app.AppCompatActivity
 import android.view.GestureDetector
 import android.view.MotionEvent
@@ -12,6 +15,13 @@ import android.widget.*
 abstract class StepActivity: AppCompatActivity(),
     GestureDetector.OnGestureListener
 {
+
+    protected var accountId = -1
+    protected var receivedHike: Hike? = null
+    protected var supplies: ArrayList<Supply>? = null
+    protected var contacts: ArrayList<Contact>? = null
+    protected var isNewHike: Boolean = true
+
     var gDetector: GestureDetectorCompat? = null
 
     private var pixelDensity: Float = 0.toFloat()
@@ -65,6 +75,12 @@ abstract class StepActivity: AppCompatActivity(),
 
         // Be sure to call the superclass implementation
         return super.onTouchEvent(event)
+    }
+
+    open protected fun cancel(context: Context) {
+        val i = Intent(context, MainActivity::class.java)
+        i.putExtra("accountId", accountId)
+        startActivity(i)
     }
 
     private fun checkDimensions(config: Configuration) {
@@ -125,5 +141,18 @@ abstract class StepActivity: AppCompatActivity(),
 
     open fun nextStep() {
 
+    }
+
+    protected fun displayHelpBox(context: Context) {
+        AlertDialog.Builder(context)
+                .setTitle("Help")
+                .setMessage("MyHikes is an app that lets you keep track of " +
+                        "hiking plans. First, create an account or log into one " +
+                        "that already exists. Then, enter hiking information. To " +
+                        "go to the next or previous step, either tap the appropriate " +
+                        "buttons at the bottom of the screen, or swipe left or right. " +
+                        "At any time, tap 'Cancel', and all changes you made will not " +
+                        "be saved.")
+                .show()
     }
 }

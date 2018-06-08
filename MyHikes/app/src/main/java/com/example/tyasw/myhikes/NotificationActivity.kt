@@ -5,27 +5,35 @@ import android.app.PendingIntent
 import android.content.Intent
 import android.content.IntentFilter
 import android.content.pm.PackageManager
-import android.content.res.Configuration
 import android.os.Bundle
 import android.support.v4.app.ActivityCompat
 import android.support.v4.content.ContextCompat
 import android.telephony.SmsManager
+import android.view.Menu
+import android.view.MenuItem
 import android.widget.Toast
 import kotlinx.android.synthetic.main.activity_notification.*
+
+/**
+ * Program: MyHikes
+ * Description: Organize hiking plans.
+ * Author: William Tyas
+ * Notes: Currently, the SMS feature has not been tested, so it is unknown
+ *      whether it works or not. A data plan is required to send SMS messages,
+ *      but the device this app was tested on did not have one.
+ * Last Modified: 6/8/18
+ */
 
 // Code sending sms messages came from https://android.jlelse.eu/detecting-sending-sms-on-android-8a154562597f,
 // https://www.ssaurel.com/blog/how-to-send-and-receive-sms-in-android/,
 // and http://xadkile.blogspot.com/2017/09/this-post-gives-examples-of-sending-sms.html
 class NotificationActivity : StepActivity() {
-    private var accountId = -1
-    private var receivedHike: Hike? = null
-    private var supplies: ArrayList<Supply>? = null
-    private var contacts: ArrayList<Contact>? = null
-    private var isNewHike: Boolean = true
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_notification)
+
+        val actionBar = supportActionBar
+        actionBar?.setLogo(R.mipmap.ic_launcher)
 
         val extras = intent.extras
 
@@ -44,11 +52,41 @@ class NotificationActivity : StepActivity() {
             previousStep()
         }
 
+        notificationCancelButton.setOnClickListener {
+            cancel(this)
+        }
+
         notificationFinishButton.setOnClickListener {
             finishStep()
         }
 
         setButtonRowParameters(buttonRow)
+    }
+
+    override fun onSaveInstanceState(savedInstanceState: Bundle) {
+        super.onSaveInstanceState(savedInstanceState)
+
+        savedInstanceState.putInt("accountId", accountId)
+
+        if (isNewHike) {
+            savedInstanceState.putBoolean("isNewHike", true)
+        } else {
+            savedInstanceState.putBoolean("isNewHike", false)
+        }
+
+        savedInstanceState.putParcelable("hike", receivedHike)
+        savedInstanceState.putParcelableArrayList("supplies", supplies)
+        savedInstanceState.putParcelableArrayList("contacts", contacts)
+    }
+
+    override fun onRestoreInstanceState(savedInstanceState: Bundle) {
+        super.onRestoreInstanceState(savedInstanceState)
+
+        accountId = savedInstanceState.getInt("accountId")
+        isNewHike = savedInstanceState.getBoolean("isNewHike")
+        receivedHike = savedInstanceState.getParcelable("hike")
+        supplies = savedInstanceState.getParcelableArrayList("supplies")
+        contacts = savedInstanceState.getParcelableArrayList("contacts")
     }
 
     override fun previousStep() {
@@ -75,16 +113,6 @@ class NotificationActivity : StepActivity() {
         val i = Intent(this, MainActivity::class.java)
 
         i.putExtra("accountId", accountId)
-
-        if (isNewHike) {
-            i.putExtra("isNewHike", true)
-        } else {
-            i.putExtra("isNewHike", false)
-        }
-
-        i.putExtra("hike", receivedHike)
-        i.putExtra("supplies", supplies)
-        i.putExtra("contacts", contacts)
 
         startActivity(i)
     }
@@ -187,6 +215,21 @@ class NotificationActivity : StepActivity() {
                             Toast.LENGTH_LONG).show()
                 }
             }
+        }
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+        menuInflater.inflate(R.menu.menu, menu)
+        return true
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        return when (item.itemId) {
+            R.id.menu_help -> {
+                displayHelpBox(this)
+                true
+            }
+            else -> super.onOptionsItemSelected(item)
         }
     }
 

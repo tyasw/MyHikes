@@ -1,30 +1,29 @@
 package com.example.tyasw.myhikes
 
-import android.util.Base64
-
 import android.content.Intent
 import android.os.Bundle
 import android.os.Handler
 import android.support.constraint.ConstraintSet
-import android.support.v4.app.ActivityOptionsCompat
-import android.support.v7.app.AppCompatActivity
 import android.transition.ChangeBounds
 import android.transition.TransitionManager
-import android.util.Log
-import android.view.View
-import android.widget.EditText
-import android.widget.TextView
+import android.util.Base64
+import android.view.Menu
+import android.view.MenuItem
 import android.widget.Toast
-import com.example.tyasw.myhikes.R.layout
 import kotlinx.android.synthetic.main.activity_login.*
-import java.io.*
-import java.nio.Buffer
-import java.util.*
-import javax.crypto.Cipher.DECRYPT_MODE
 import javax.crypto.Cipher.ENCRYPT_MODE
 import javax.crypto.SecretKey
 import javax.crypto.spec.SecretKeySpec
 
+/**
+ * Program: MyHikes
+ * Description: Organize hiking plans.
+ * Author: William Tyas
+ * Notes: Currently, the SMS feature has not been tested, so it is unknown
+ *      whether it works or not. A data plan is required to send SMS messages,
+ *      but the device this app was tested on did not have one.
+ * Last Modified: 6/8/18
+ */
 class LoginActivity : StepActivity() {
     private var aes: AdvEncryptionStand = AdvEncryptionStand()
     private var MASTER_KEY: SecretKey? = null
@@ -32,6 +31,9 @@ class LoginActivity : StepActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_login)
+
+        val actionBar = supportActionBar
+        actionBar?.setLogo(R.mipmap.ic_launcher)
 
         MASTER_KEY = getEncryptionKey()
 
@@ -52,6 +54,32 @@ class LoginActivity : StepActivity() {
                 playAnimation()
             }
         }, 1000)
+    }
+
+    override fun onSaveInstanceState(savedInstanceState: Bundle) {
+        super.onSaveInstanceState(savedInstanceState)
+
+        savedInstanceState.putInt("accountId", accountId)
+
+        if (isNewHike) {
+            savedInstanceState.putBoolean("isNewHike", true)
+        } else {
+            savedInstanceState.putBoolean("isNewHike", false)
+        }
+
+        savedInstanceState.putParcelable("hike", receivedHike)
+        savedInstanceState.putParcelableArrayList("supplies", supplies)
+        savedInstanceState.putParcelableArrayList("contacts", contacts)
+    }
+
+    override fun onRestoreInstanceState(savedInstanceState: Bundle) {
+        super.onRestoreInstanceState(savedInstanceState)
+
+        accountId = savedInstanceState.getInt("accountId")
+        isNewHike = savedInstanceState.getBoolean("isNewHike")
+        receivedHike = savedInstanceState.getParcelable("hike")
+        supplies = savedInstanceState.getParcelableArrayList("supplies")
+        contacts = savedInstanceState.getParcelableArrayList("contacts")
     }
 
     // Get the key used for encryption from the database
@@ -127,5 +155,20 @@ class LoginActivity : StepActivity() {
 
     private fun encryptPassword(plaintext: String): String? {
         return aes.crypt(ENCRYPT_MODE, plaintext, MASTER_KEY!!)
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+        menuInflater.inflate(R.menu.menu, menu)
+        return true
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        return when (item.itemId) {
+            R.id.menu_help -> {
+                displayHelpBox(this)
+                true
+            }
+            else -> super.onOptionsItemSelected(item)
+        }
     }
 }

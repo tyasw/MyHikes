@@ -1,15 +1,16 @@
 package com.example.tyasw.myhikes
 
-import android.support.v4.content.ContextCompat
-import android.os.Bundle
 import android.Manifest
 import android.content.Intent
 import android.content.pm.PackageManager
-import android.content.res.Configuration
+import android.os.Bundle
 import android.support.v4.app.ActivityCompat
+import android.support.v4.content.ContextCompat
 import android.util.Log
+import android.view.Menu
+import android.view.MenuItem
 import android.widget.Toast
-
+import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.SupportMapFragment
@@ -18,14 +19,17 @@ import com.google.android.gms.maps.model.Marker
 import com.google.android.gms.maps.model.MarkerOptions
 import kotlinx.android.synthetic.main.activity_maps.*
 
+/**
+ * Program: MyHikes
+ * Description: Organize hiking plans.
+ * Author: William Tyas
+ * Notes: Currently, the SMS feature has not been tested, so it is unknown
+ *      whether it works or not. A data plan is required to send SMS messages,
+ *      but the device this app was tested on did not have one.
+ * Last Modified: 6/8/18
+ */
 class MapsActivity : StepActivity(), OnMapReadyCallback,
         GoogleMap.OnMapClickListener, GoogleMap.OnMarkerClickListener {
-
-    private var accountId = -1
-    private var receivedHike: Hike? = null
-    private var supplies: ArrayList<Supply>? = null
-    private var contacts: ArrayList<Contact>? = null
-    private var isNewHike: Boolean = true
 
     private val LOCATION_REQUEST_CODE = 101
     private lateinit var mMap: GoogleMap
@@ -33,6 +37,9 @@ class MapsActivity : StepActivity(), OnMapReadyCallback,
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_maps)
+
+        val actionBar = supportActionBar
+        actionBar?.setLogo(R.mipmap.ic_launcher)
 
         val extras = intent.extras
 
@@ -43,16 +50,19 @@ class MapsActivity : StepActivity(), OnMapReadyCallback,
         supplies = intent.getParcelableArrayListExtra<Supply>("supplies") ?: null
         contacts = intent.getParcelableArrayListExtra<Contact>("contacts") ?: null
 
-        //populateMap()
-
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
         val mapFragment = supportFragmentManager
                 .findFragmentById(R.id.map) as SupportMapFragment
         mapFragment.getMapAsync(this)
 
         // Set up button onclick handlers
+
         mapsPreviousButton.setOnClickListener {
             previousStep()
+        }
+
+        mapsCancelButton.setOnClickListener {
+            cancel(this)
         }
 
         mapsNextButton.setOnClickListener {
@@ -71,6 +81,32 @@ class MapsActivity : StepActivity(), OnMapReadyCallback,
         }
     }
 
+    override fun onSaveInstanceState(savedInstanceState: Bundle) {
+        super.onSaveInstanceState(savedInstanceState)
+
+        savedInstanceState.putInt("accountId", accountId)
+
+        if (isNewHike) {
+            savedInstanceState.putBoolean("isNewHike", true)
+        } else {
+            savedInstanceState.putBoolean("isNewHike", false)
+        }
+
+        savedInstanceState.putParcelable("hike", receivedHike)
+        savedInstanceState.putParcelableArrayList("supplies", supplies)
+        savedInstanceState.putParcelableArrayList("contacts", contacts)
+    }
+
+    override fun onRestoreInstanceState(savedInstanceState: Bundle) {
+        super.onRestoreInstanceState(savedInstanceState)
+
+        accountId = savedInstanceState.getInt("accountId")
+        isNewHike = savedInstanceState.getBoolean("isNewHike")
+        receivedHike = savedInstanceState.getParcelable("hike")
+        supplies = savedInstanceState.getParcelableArrayList("supplies")
+        contacts = savedInstanceState.getParcelableArrayList("contacts")
+    }
+
     private fun populateMap() {
         try {
             mMap.clear()
@@ -80,6 +116,8 @@ class MapsActivity : StepActivity(), OnMapReadyCallback,
             mMap.addMarker(MarkerOptions()
                     .position(position)
                     .title(receivedHike?.latitude.toString() + ", " + receivedHike?.longitude.toString()))
+
+            mMap.animateCamera(CameraUpdateFactory.newLatLng(position))
         } catch (e: UninitializedPropertyAccessException) {
             Log.d("ABC", "Map uninitialized")
         }
@@ -197,8 +235,18 @@ class MapsActivity : StepActivity(), OnMapReadyCallback,
         startActivity(i)
     }
 
-    override fun onConfigurationChanged(newConfig: Configuration) {
-        super.onConfigurationChanged(newConfig)
-        Toast.makeText(this, "Configuration changed", Toast.LENGTH_LONG).show()
+    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+        menuInflater.inflate(R.menu.menu, menu)
+        return true
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        return when (item.itemId) {
+            R.id.menu_help -> {
+                displayHelpBox(this)
+                true
+            }
+            else -> super.onOptionsItemSelected(item)
+        }
     }
 }

@@ -1,20 +1,24 @@
 package com.example.tyasw.myhikes
 
 import android.content.Intent
-import android.content.res.Configuration
-import android.content.res.Resources
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
 import android.widget.*
-import android.support.v7.app.AppCompatActivity
-import android.support.v7.widget.Toolbar
 import kotlinx.android.synthetic.main.activity_main.*
 
+/**
+ * Program: MyHikes
+ * Description: Organize hiking plans.
+ * Author: William Tyas
+ * Notes: Currently, the SMS feature has not been tested, so it is unknown
+ *      whether it works or not. A data plan is required to send SMS messages,
+ *      but the device this app was tested on did not have one.
+ * Last Modified: 6/8/18
+ */
 class MainActivity : StepActivity() {
-    var hikesList: ArrayList<Hike> = ArrayList<Hike>()
-    var accountId = -1
-    var oldHikeName = ""
+    private var hikesList: ArrayList<Hike> = ArrayList<Hike>()
+    private var oldHikeName = ""
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -24,7 +28,9 @@ class MainActivity : StepActivity() {
 
         accountId = extras.getInt("accountId")
 
-        // Set up button onclick handlers
+        val actionBar = supportActionBar
+        actionBar?.setLogo(R.mipmap.ic_launcher)
+
         mainAddButton.setOnClickListener {
             addNew()
         }
@@ -33,18 +39,35 @@ class MainActivity : StepActivity() {
             nextStep()
         }
 
-        //deleteEverythingFromDatabase()
-
         populateHikesList()
 
         setButtonRowParameters(buttonRow)
     }
 
-    private fun deleteEverythingFromDatabase() {
-        val dbHandler = MyDBHandler(this, null, null, 1)
-        dbHandler.deleteAllHikes(accountId)
-        dbHandler.deleteEveryContact()
-        dbHandler.deleteEverySupply()
+    override fun onSaveInstanceState(savedInstanceState: Bundle) {
+        super.onSaveInstanceState(savedInstanceState)
+
+        savedInstanceState.putInt("accountId", accountId)
+
+        if (isNewHike) {
+            savedInstanceState.putBoolean("isNewHike", true)
+        } else {
+            savedInstanceState.putBoolean("isNewHike", false)
+        }
+
+        savedInstanceState.putParcelable("hike", receivedHike)
+        savedInstanceState.putParcelableArrayList("supplies", supplies)
+        savedInstanceState.putParcelableArrayList("contacts", contacts)
+    }
+
+    override fun onRestoreInstanceState(savedInstanceState: Bundle) {
+        super.onRestoreInstanceState(savedInstanceState)
+
+        accountId = savedInstanceState.getInt("accountId")
+        isNewHike = savedInstanceState.getBoolean("isNewHike")
+        receivedHike = savedInstanceState.getParcelable("hike")
+        supplies = savedInstanceState.getParcelableArrayList("supplies")
+        contacts = savedInstanceState.getParcelableArrayList("contacts")
     }
 
     private fun populateHikesList() {
@@ -60,7 +83,6 @@ class MainActivity : StepActivity() {
             noResults.text = "There are currently no hikes"
 
             noResults.layoutParams = setTableLayout(20, 20, 0, 0)
-            //row.layoutParams = setTableLayout(20, 20, 0, 0)
 
             noResults.textSize = 18f
 
@@ -70,7 +92,6 @@ class MainActivity : StepActivity() {
 
         val radioHikesList = RadioGroup(this)
         for (hike in hikes) {
-            //val row = TableRow(this)
             val radioButton = RadioButton(this)
             radioButton.id = hike.id
             radioButton.text = hike.name
@@ -83,18 +104,6 @@ class MainActivity : StepActivity() {
         radioHikesList.setOnCheckedChangeListener(RadioGroup.OnCheckedChangeListener { radioGroup, i -> getSelectedItem(radioGroup, i)})
         hikesTable.addView(radioHikesList)
     }
-
-//    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
-//        menuInflater.inflate(R.menu.menu_main, menu)
-//        return true
-//    }
-
-//    override fun onOptionsItemSelected(item: MenuItem): Boolean {
-//        return when (item.itemId) {
-//            5 -> true
-//            else -> super.onOptionsItemSelected(item)
-//        }
-//    }
 
     private fun getSelectedItem(radioGroup: RadioGroup, i: Int) {
         val selectedId = radioGroup.checkedRadioButtonId
@@ -135,6 +144,21 @@ class MainActivity : StepActivity() {
             startActivity(i)
         } else {
             Toast.makeText(this, "Select a hike first, or create a new one.", Toast.LENGTH_LONG).show()
+        }
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+        menuInflater.inflate(R.menu.menu, menu)
+        return true
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        return when (item.itemId) {
+            R.id.menu_help -> {
+                displayHelpBox(this)
+                true
+            }
+            else -> super.onOptionsItemSelected(item)
         }
     }
 }

@@ -1,28 +1,45 @@
 package com.example.tyasw.myhikes
 
-import android.support.v4.content.ContextCompat
-import android.os.Bundle
 import android.Manifest
 import android.content.ContentResolver
 import android.content.Intent
 import android.content.pm.PackageManager
-import android.os.PersistableBundle
+import android.os.Bundle
 import android.provider.ContactsContract
 import android.support.v4.app.ActivityCompat
+import android.support.v4.content.ContextCompat
 import android.util.Log
+import android.view.Menu
+import android.view.MenuItem
 import android.widget.CheckBox
 import android.widget.TableRow
 import android.widget.Toast
-
 import kotlinx.android.synthetic.main.activity_choose_contacts.*
 
+/**
+ * Program: MyHikes
+ * Description: Organize hiking plans.
+ * Author: William Tyas
+ * Notes: Currently, the SMS feature has not been tested, so it is unknown
+ *      whether it works or not. A data plan is required to send SMS messages,
+ *      but the device this app was tested on did not have one.
+ * Last Modified: 6/8/18
+ */
 class ChooseContactsActivity : StepActivity() {
-    private var contacts: ArrayList<Contact>? = ArrayList<Contact>()
     private var entries = ArrayList<CheckBox>()
+    private var isCancelPressed = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_choose_contacts)
+
+        val actionBar = supportActionBar
+        actionBar?.setLogo(R.mipmap.ic_launcher)
+
+        chooseContactsCancelButton.setOnClickListener {
+            isCancelPressed = true
+            finish()
+        }
 
         chooseContactsDoneButton.setOnClickListener {
             done()
@@ -32,7 +49,7 @@ class ChooseContactsActivity : StepActivity() {
     }
 
     // Save list of checkboxes in list of contacts
-    override fun onSaveInstanceState(outState: Bundle) {
+    override fun onSaveInstanceState(savedInstanceState: Bundle) {
         contacts?.clear()
 
         for (i in entries.indices) {
@@ -40,11 +57,29 @@ class ChooseContactsActivity : StepActivity() {
             contacts?.add(contact)
         }
 
-        super.onSaveInstanceState(outState)
+        savedInstanceState.putInt("accountId", accountId)
+
+        if (isNewHike) {
+            savedInstanceState.putBoolean("isNewHike", true)
+        } else {
+            savedInstanceState.putBoolean("isNewHike", false)
+        }
+
+        savedInstanceState.putParcelable("hike", receivedHike)
+        savedInstanceState.putParcelableArrayList("supplies", supplies)
+        savedInstanceState.putParcelableArrayList("contacts", contacts)
+
+        super.onSaveInstanceState(savedInstanceState)
     }
 
     override fun onRestoreInstanceState(savedInstanceState: Bundle) {
         super.onRestoreInstanceState(savedInstanceState)
+
+        accountId = savedInstanceState.getInt("accountId")
+        isNewHike = savedInstanceState.getBoolean("isNewHike")
+        receivedHike = savedInstanceState.getParcelable("hike")
+        supplies = savedInstanceState.getParcelableArrayList("supplies")
+        contacts = savedInstanceState.getParcelableArrayList("contacts")
     }
 
     private fun populateContactsList() {
@@ -188,9 +223,26 @@ class ChooseContactsActivity : StepActivity() {
     override fun finish() {
         val i = Intent()
 
-        i.putExtra("returnedContacts", contacts)
+        if (!isCancelPressed) {
+            i.putExtra("returnedContacts", contacts)
+        }
         setResult(RESULT_OK, i)
         super.finish()
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+        menuInflater.inflate(R.menu.menu, menu)
+        return true
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        return when (item.itemId) {
+            R.id.menu_help -> {
+                displayHelpBox(this)
+                true
+            }
+            else -> super.onOptionsItemSelected(item)
+        }
     }
 
     companion object {

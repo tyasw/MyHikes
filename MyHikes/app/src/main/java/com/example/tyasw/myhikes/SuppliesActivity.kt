@@ -1,30 +1,33 @@
 package com.example.tyasw.myhikes
 
 import android.content.Intent
-import android.content.res.Configuration
 import android.os.Bundle
-import android.os.PersistableBundle
-import android.support.v4.widget.TextViewCompat
-import android.view.ViewGroup
-import android.widget.LinearLayout
+import android.view.Menu
+import android.view.MenuItem
 import android.widget.TableRow
 import android.widget.TextView
 import android.widget.Toast
 import kotlinx.android.synthetic.main.activity_supplies.*
 
+/**
+ * Program: MyHikes
+ * Description: Organize hiking plans.
+ * Author: William Tyas
+ * Notes: Currently, the SMS feature has not been tested, so it is unknown
+ *      whether it works or not. A data plan is required to send SMS messages,
+ *      but the device this app was tested on did not have one.
+ * Last Modified: 6/8/18
+ */
 class SuppliesActivity : StepActivity() {
-    private var accountId = -1
-    private var receivedHike: Hike? = null
-    private var contacts: ArrayList<Contact>? = null
-    private var supplies: ArrayList<Supply>? = null
-    private var isNewHike: Boolean = true
-
     private var names = ArrayList<TextView>()
     private var quantities = ArrayList<TextView>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_supplies)
+
+        val actionBar = supportActionBar
+        actionBar?.setLogo(R.mipmap.ic_launcher)
 
         val extras = intent.extras
 
@@ -39,6 +42,10 @@ class SuppliesActivity : StepActivity() {
 
         suppliesPreviousButton.setOnClickListener {
             previousStep()
+        }
+
+        suppliesCancelButton.setOnClickListener {
+            cancel(this)
         }
 
         suppliesNextButton.setOnClickListener {
@@ -195,18 +202,22 @@ class SuppliesActivity : StepActivity() {
         name.text = supplyName.text.toString()
         quantity.text = supplyQuantity.text.toString()
 
-        setLayoutMargins(name, quantity)
+        if (quantity.text == "") {
+            Toast.makeText(this, "Must enter a valid quantity", Toast.LENGTH_LONG).show()
+        } else {
+            setLayoutMargins(name, quantity)
 
-        name.textSize = 18f
-        quantity.textSize = 18f
+            name.textSize = 18f
+            quantity.textSize = 18f
 
-        names.add(name)
-        quantities.add(quantity)
+            names.add(name)
+            quantities.add(quantity)
 
-        supplyName.text.clear()
-        supplyQuantity.text.clear()
+            supplyName.text.clear()
+            supplyQuantity.text.clear()
 
-        setUpSuppliesList()
+            setUpSuppliesList()
+        }
     }
 
     private fun setLayout() {
@@ -233,7 +244,6 @@ class SuppliesActivity : StepActivity() {
 
     // Elements are name and quantity
     override fun setLayoutMargins(vararg elements: TextView) {
-        //super.setLayoutMargins(elements)
         setLayout()
 
         if (verticalDimensionsSet) {
@@ -309,5 +319,20 @@ class SuppliesActivity : StepActivity() {
         i.putExtra("contacts", contacts)
 
         startActivity(i)
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+        menuInflater.inflate(R.menu.menu, menu)
+        return true
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        return when (item.itemId) {
+            R.id.menu_help -> {
+                displayHelpBox(this)
+                true
+            }
+            else -> super.onOptionsItemSelected(item)
+        }
     }
 }

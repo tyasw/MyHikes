@@ -33,7 +33,7 @@
 
         <activity
             android:name=".LoginActivity"
-            android:label="Login">
+            android:label="MyHikes">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -56,9 +56,11 @@
             android:name=".ContactsActivity"
             android:label="Who&apos;s Going With You?" />
         <activity
+            android:name=".ChooseContactsActivity"
+            android:label="Choose Contacts" />
+        <activity
             android:name=".NotificationActivity"
             android:label="Send a Text to Your Contacts" />
-        <activity android:name=".ChooseContactsActivity" />
     </application>
 
 </manifest>
