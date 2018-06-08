@@ -4,7 +4,12 @@ import android.util.Base64
 
 import android.content.Intent
 import android.os.Bundle
+import android.os.Handler
+import android.support.constraint.ConstraintSet
+import android.support.v4.app.ActivityOptionsCompat
 import android.support.v7.app.AppCompatActivity
+import android.transition.ChangeBounds
+import android.transition.TransitionManager
 import android.util.Log
 import android.view.View
 import android.widget.EditText
@@ -28,23 +33,8 @@ class LoginActivity : StepActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_login)
 
-        // Query db for key
-        val dbHandler = MyDBHandler(this, null, null, 1)
-        val key = dbHandler.getKey()
-        if (key != null) {
-            val decodedKey: ByteArray = Base64.decode(key, Base64.DEFAULT)
-            MASTER_KEY = SecretKeySpec(decodedKey, 0, decodedKey.size, "AES")
-            Log.d("LoginActivity", "Key read and saved")
-        } else {
-            // No key exists, create one
-            aes = AdvEncryptionStand()
-            MASTER_KEY = aes.getKey()
-            val encodedKey: String = Base64.encodeToString(aes.getKey().encoded, Base64.DEFAULT)
-            dbHandler.addKey(encodedKey)
-            Log.d("LoginActivity", "Key added to db")
-        }
+        MASTER_KEY = getEncryptionKey()
 
-        //deleteEverythingFromDatabase()
         aes = AdvEncryptionStand()
 
         createAccountButton.setOnClickListener {
@@ -54,14 +44,49 @@ class LoginActivity : StepActivity() {
         loginButton.setOnClickListener {
             login()
         }
+
+        // Play animation after 1 second
+        val handler: Handler = Handler()
+        handler.postDelayed(object: Runnable {
+            override fun run() {
+                playAnimation()
+            }
+        }, 1000)
     }
 
-    private fun deleteEverythingFromDatabase() {
+    // Get the key used for encryption from the database
+    // If it doesn't exist, create a new one
+    private fun getEncryptionKey(): SecretKey {
+        var secretKey: SecretKey? = null
+
         val dbHandler = MyDBHandler(this, null, null, 1)
-        dbHandler.deleteAccount(0)
-        dbHandler.deleteAllHikes(0)
-        dbHandler.deleteEveryContact()
-        dbHandler.deleteEverySupply()
+        val key = dbHandler.getKey()
+        if (key != null) {
+            val decodedKey: ByteArray = Base64.decode(key, Base64.DEFAULT)
+            secretKey = SecretKeySpec(decodedKey, 0, decodedKey.size, "AES")
+        } else {
+            aes = AdvEncryptionStand()
+            secretKey = aes.getKey()
+            val encodedKey: String = Base64.encodeToString(aes.getKey().encoded, Base64.DEFAULT)
+            dbHandler.addKey(encodedKey)
+        }
+
+        return secretKey
+    }
+
+    // Play animation of app logo increasing in size
+    private fun playAnimation() {
+        val transition = ChangeBounds()
+        transition.setDuration(1000L)
+
+        TransitionManager.beginDelayedTransition(imageViewLayout, transition)
+
+        logoImageView.minimumWidth = 500
+        logoImageView.minimumHeight = 500
+
+        val set = ConstraintSet()
+        set.clone(imageViewLayout)
+        set.applyTo(imageViewLayout)
     }
 
     // Look up account in the database

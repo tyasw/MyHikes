@@ -36,8 +36,6 @@ class NotificationActivity : StepActivity() {
         supplies = intent.getParcelableArrayListExtra<Supply>("supplies") ?: null
         contacts = intent.getParcelableArrayListExtra<Contact>("contacts") ?: null
 
-        populateInfo(receivedHike)
-
         sendTextButton.setOnClickListener {
             send()
         }
@@ -51,12 +49,6 @@ class NotificationActivity : StepActivity() {
         }
 
         setButtonRowParameters(buttonRow)
-    }
-
-    private fun populateInfo(hike: Hike?) {
-        if (hike != null) {
-
-        }
     }
 
     override fun previousStep() {

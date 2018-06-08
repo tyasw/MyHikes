@@ -117,8 +117,8 @@ class SuppliesActivity : StepActivity() {
             quantityColumn.width = colWidth
             quantityColumn.maxWidth = colWidth
 
-            nameColumn.layoutParams = setTableLayout(10, 10, 10, 0)
-            quantityColumn.layoutParams = setTableLayout(10, 10, 10, 0)
+            nameColumn.layoutParams = setTableLayout(10, 10, 10, 10)
+            quantityColumn.layoutParams = setTableLayout(10, 10, 10, 10)
 
             nameColumn.textSize = 18f
             quantityColumn.textSize = 18f
