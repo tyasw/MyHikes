@@ -127,8 +127,8 @@ class SuppliesActivity : StepActivity() {
             nameColumn.layoutParams = setTableLayout(10, 10, 10, 10)
             quantityColumn.layoutParams = setTableLayout(10, 10, 10, 10)
 
-            nameColumn.textSize = 18f
-            quantityColumn.textSize = 18f
+            nameColumn.textSize = 22f
+            quantityColumn.textSize = 22f
 
             columnTitles.addView(nameColumn)
             columnTitles.addView(quantityColumn)
@@ -138,7 +138,7 @@ class SuppliesActivity : StepActivity() {
             val noResults = TextView(this)
             noResults.text = "No entries"
             noResults.layoutParams = setTableLayout(10, 10, 10, 10)
-            noResults.textSize = 18f
+            noResults.textSize = 22f
 
             columnTitles.addView(noResults)
             dbTable.addView(columnTitles)
@@ -154,8 +154,8 @@ class SuppliesActivity : StepActivity() {
 
             setLayoutMargins(name, quantity)
 
-            name.textSize = 18f
-            quantity.textSize = 18f
+            name.textSize = 22f
+            quantity.textSize = 22f
 
             name.id = names.lastIndex
             quantity.id = quantities.lastIndex
@@ -177,8 +177,8 @@ class SuppliesActivity : StepActivity() {
 
                 setLayoutMargins(name, quantity)
 
-                name.textSize = 18f
-                quantity.textSize = 18f
+                name.textSize = 22f
+                quantity.textSize = 22f
 
                 name.id = names.lastIndex
                 quantity.id = quantities.lastIndex
@@ -207,8 +207,8 @@ class SuppliesActivity : StepActivity() {
         } else {
             setLayoutMargins(name, quantity)
 
-            name.textSize = 18f
-            quantity.textSize = 18f
+            name.textSize = 22f
+            quantity.textSize = 22f
 
             names.add(name)
             quantities.add(quantity)

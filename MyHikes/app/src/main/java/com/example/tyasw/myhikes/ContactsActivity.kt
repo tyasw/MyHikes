@@ -115,8 +115,8 @@ class ContactsActivity : StepActivity() {
             nameColumn.layoutParams = setTableLayout(10, 10, 10, 0)
             phoneColumn.layoutParams = setTableLayout(10, 10, 10, 0)
 
-            nameColumn.textSize = 18f
-            phoneColumn.textSize = 18f
+            nameColumn.textSize = 22f
+            phoneColumn.textSize = 22f
 
             columnTitles.addView(nameColumn)
             columnTitles.addView(phoneColumn)
@@ -126,7 +126,7 @@ class ContactsActivity : StepActivity() {
             val noResults = TextView(this)
             noResults.text = "No entries"
             noResults.layoutParams = setTableLayout(10, 10, 10, 10)
-            noResults.textSize = 18f
+            noResults.textSize = 22f
 
             columnTitles.addView(noResults)
             dbTable.addView(columnTitles)
@@ -143,8 +143,8 @@ class ContactsActivity : StepActivity() {
 
                 setLayoutMargins(name, phone)
 
-                name.textSize = 18f
-                phone.textSize = 18f
+                name.textSize = 22f
+                phone.textSize = 22f
 
                 name.id = names.lastIndex
                 phone.id = phoneNumbers.lastIndex

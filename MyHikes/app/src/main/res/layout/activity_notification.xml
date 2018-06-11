@@ -5,6 +5,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="#b5f8ff"
     tools:context="com.example.tyasw.myhikes.NotificationActivity">
 
     <LinearLayout
@@ -23,7 +24,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/enter_message_string"
-                android:textSize="24sp" />
+                android:textSize="22sp" />
 
         </TableRow>
 
@@ -38,7 +39,8 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:ems="10"
-                android:inputType="textPersonName" />
+                android:inputType="textPersonName"
+                android:textSize="22sp" />
 
         </TableRow>
 
@@ -52,6 +54,7 @@
                 android:id="@+id/sendTextButton"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:theme="@style/AppTheme.Button"
                 android:text="@string/send_text_string" />
         </TableRow>
 

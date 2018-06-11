@@ -5,6 +5,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="#b5f8ff"
     tools:context="com.example.tyasw.myhikes.BasicInfoActivity">
 
     <LinearLayout
@@ -31,14 +32,15 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="@string/hike_name"
-                        android:textSize="18sp" />
+                        android:textSize="22sp" />
 
                     <EditText
                         android:id="@+id/hikeName"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:ems="10"
-                        android:inputType="textPersonName" />
+                        android:inputType="textPersonName"
+                        android:textSize="22sp" />
 
                 </TableRow>
 
@@ -52,21 +54,22 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="@string/length_string"
-                        android:textSize="18sp" />
+                        android:textSize="22sp" />
 
                     <EditText
                         android:id="@+id/length"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:ems="10"
-                        android:inputType="numberDecimal" />
+                        android:inputType="numberDecimal"
+                        android:textSize="22sp" />
 
                     <TextView
                         android:id="@+id/milesLabel"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="@string/miles_string"
-                        android:textSize="18sp" />
+                        android:textSize="22sp" />
 
                 </TableRow>
 
@@ -80,14 +83,15 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="@string/difficulty_string"
-                        android:textSize="18sp" />
+                        android:textSize="22sp" />
 
                     <EditText
                         android:id="@+id/difficulty"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:ems="10"
-                        android:inputType="textPersonName" />
+                        android:inputType="textPersonName"
+                        android:textSize="22sp" />
 
                 </TableRow>
 

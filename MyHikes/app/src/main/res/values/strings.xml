@@ -23,4 +23,5 @@
     <string name="done_string">Done</string>
     <string name="enter_message_string">Enter Message</string>
     <string name="send_text_string">Send Text</string>
+    <string name="add_new_string">Add New</string>
 </resources>

@@ -399,8 +399,10 @@ class MyDBHandler(context: Context, name: String?,
         val query = "SELECT * FROM $TABLE_ACCOUNTS WHERE $PASSWORD = \'$password\'"
 
         val db = this.writableDatabase
-        val cursor = db.rawQuery(query, null)
 
+        //val cursor = db.query("$TABLE_ACCOUNTS", "*", "$PASSWORD = ?", password, null, null, null)
+
+        val cursor = db.rawQuery(query, null)
         var id = -1
 
         if (cursor.moveToFirst()) {

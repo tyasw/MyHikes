@@ -2,6 +2,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="#b5f8ff"
     tools:context="com.example.tyasw.myhikes.ContactsActivity">
 
     <LinearLayout
@@ -20,6 +21,7 @@
                 android:id="@+id/chooseContactsButton"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:theme="@style/AppTheme.Button"
                 android:text="@string/choose_contacts_string" />
         </TableRow>
 

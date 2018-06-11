@@ -2,6 +2,7 @@ package com.example.tyasw.myhikes
 
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import android.widget.*
@@ -84,7 +85,7 @@ class MainActivity : StepActivity() {
 
             noResults.layoutParams = setTableLayout(20, 20, 0, 0)
 
-            noResults.textSize = 18f
+            noResults.textSize = 22f
 
             row.addView(noResults)
             hikesTable.addView(row)
@@ -92,10 +93,11 @@ class MainActivity : StepActivity() {
 
         val radioHikesList = RadioGroup(this)
         for (hike in hikes) {
+            Log.d("MainActivity", "Hike id is " + hike.id)
             val radioButton = RadioButton(this)
             radioButton.id = hike.id
             radioButton.text = hike.name
-            radioButton.textSize = 18f
+            radioButton.textSize = 22f
             radioButton.layoutParams = setRadioButtonLayout(20, 20, 0, 0)
 
             radioHikesList.addView(radioButton)

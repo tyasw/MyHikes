@@ -13,6 +13,7 @@ import android.view.Menu
 import android.view.MenuItem
 import android.widget.CheckBox
 import android.widget.TableRow
+import android.widget.TextView
 import android.widget.Toast
 import kotlinx.android.synthetic.main.activity_choose_contacts.*
 
@@ -121,9 +122,6 @@ class ChooseContactsActivity : StepActivity() {
                         contactsList = ArrayList<Contact>()
                         while (cursorPhone.moveToNext()) {
                             val phoneNumValue = cursorPhone.getString(cursorPhone.getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER))
-                            //builder.append("Contact: ").append(name).append(", Phone Number: ").append(phoneNumValue).append("\n\n")
-                            Log.d("Name ===>", phoneNumValue)
-
                             val contact = Contact(name, phoneNumValue)
                             contactsList?.add(contact)
                         }
@@ -131,8 +129,6 @@ class ChooseContactsActivity : StepActivity() {
                     cursorPhone.close()
                 }
             }
-        } else {
-            Toast.makeText(this, "No contacts available", Toast.LENGTH_LONG).show()
         }
         cursor.close()
         return contactsList
@@ -148,7 +144,7 @@ class ChooseContactsActivity : StepActivity() {
                 //setLayoutMargins(entry)
                 entry.layoutParams = setTableLayout(10, 10, 10, 10)
 
-                entry.textSize = 18f
+                entry.textSize = 22f
 
                 entry.id = contacts.lastIndex
 
@@ -158,6 +154,15 @@ class ChooseContactsActivity : StepActivity() {
 
                 dbTable.addView(row)
             }
+        } else {
+            val row = TableRow(this)
+            val noResults = TextView(this)
+            noResults.text = "No contacts available"
+            noResults.layoutParams = setTableLayout(10, 10, 10, 10)
+            noResults.textSize = 22f
+
+            row.addView(noResults)
+            dbTable.addView(row)
         }
     }
 

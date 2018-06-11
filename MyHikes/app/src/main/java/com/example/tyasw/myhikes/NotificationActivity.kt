@@ -9,6 +9,7 @@ import android.os.Bundle
 import android.support.v4.app.ActivityCompat
 import android.support.v4.content.ContextCompat
 import android.telephony.SmsManager
+import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import android.widget.Toast
@@ -137,22 +138,39 @@ class NotificationActivity : StepActivity() {
             }
         } else {    // update old entries and create new ones as necessary
             dbHandler.modifyHike(receivedHike!!)
-            val hikeEntry = dbHandler.findHike(accountId, receivedHike!!.name)
+
+            val hikeEntry = dbHandler.findHikeById(receivedHike!!.id)
+
+            //val hikeEntry = dbHandler.findHike(accountId, receivedHike!!.name)
+            Log.d("NotificationActivity", "Hike id is " + hikeEntry?.id)
+
 
             // Just delete old entries for now, much easier than updating
-            val hikeId = hikeEntry?.id
+            //val hikeId = hikeEntry?.id
             if (hikeEntry != null) {
-                dbHandler.deleteAllSupplies(hikeId!!)
-                dbHandler.deleteAllContacts(hikeId!!)
+                dbHandler.deleteAllSupplies(hikeEntry.id)
+                dbHandler.deleteAllContacts(hikeEntry.id)
             }
 
+//            if (supplies == null) {
+//                Log.d("NotificationActivity", "Supplies is null")
+//            } else {
+//                Log.d("NotificationActivity", "Supplies has size " + supplies?.size)
+//            }
+
             for (i in supplies!!.indices) {
-                supplies!![i].hikeId = hikeId!!.toInt()
+                supplies!![i].hikeId = hikeEntry!!.id
                 dbHandler.addSupply(supplies!![i])
             }
 
+            if (contacts == null) {
+                Log.d("NotificationActivity", "Contacts is null")
+            } else {
+                Log.d("NotificationActivity", "Contacts has size " + contacts?.size)
+            }
+
             for (i in contacts!!.indices) {
-                contacts!![i].hikeId = hikeId!!.toInt()
+                contacts!![i].hikeId = hikeEntry!!.id
                 dbHandler.addContact(contacts!![i])
             }
         }
